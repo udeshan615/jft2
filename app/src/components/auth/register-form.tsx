@@ -1,23 +1,29 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { cn } from '@/lib/utils/cn';
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [refCode, setRefCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) setRefCode(ref.trim().toUpperCase());
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,14 +31,17 @@ export function RegisterForm() {
     setLoading(true);
 
     const supabase = createClient();
+    const meta: Record<string, string> = {
+      display_name: displayName || email.split('@')[0],
+    };
+    if (refCode.trim()) {
+      meta.referral_code = refCode.trim().toUpperCase();
+    }
+
     const { error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          display_name: displayName || email.split('@')[0],
-        },
-      },
+      options: { data: meta },
     });
 
     if (authError) {
@@ -43,7 +52,6 @@ export function RegisterForm() {
 
     setSuccess(true);
     setLoading(false);
-    // Auto redirect after short delay (or immediate if email confirm disabled)
     setTimeout(() => {
       router.push('/dashboard');
       router.refresh();
@@ -99,39 +107,43 @@ export function RegisterForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          minLength={6}
           autoComplete="new-password"
           disabled={loading}
-          minLength={6}
         />
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="ref">Referral code (optional)</Label>
+        <Input
+          id="ref"
+          type="text"
+          placeholder="Friend's code"
+          value={refCode}
+          onChange={(e) => setRefCode(e.target.value.toUpperCase())}
+          disabled={loading}
+          className="uppercase tracking-wider"
+        />
+        {refCode && (
+          <p className="text-xs text-muted-foreground">
+            Signing up with referral code <strong>{refCode}</strong>
+          </p>
+        )}
+      </div>
+
       {error && (
-        <div
-          className={cn(
-            'rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive'
-          )}
-        >
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
         </div>
       )}
 
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? (
-          <>
-            <Spinner size="sm" />
-            Creating account…
-          </>
-        ) : (
-          'Create account'
-        )}
+        {loading ? <Spinner className="h-4 w-4" /> : 'Create account'}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{' '}
-        <Link
-          href="/login"
-          className="font-medium text-primary hover:underline"
-        >
+        <Link href="/login" className="font-medium text-primary hover:underline">
           Sign in
         </Link>
       </p>

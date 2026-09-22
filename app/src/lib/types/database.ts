@@ -319,3 +319,92 @@ export interface LeaderboardEntry {
   submitted_at: string | null;
   attempt_id: string;
 }
+
+// ---- Phase 4: Referrals ----
+export type ReferralStatus =
+  | 'registered'
+  | 'pending'
+  | 'verified'
+  | 'qualified'
+  | 'rewarded';
+
+export interface Referral {
+  id: string;
+  referrer_id: string;
+  referred_id: string;
+  status: ReferralStatus | string;
+  reward_amount_lkr: number;
+  rewarded_at: string | null;
+  qualified_at: string | null;
+  reward_transaction_id: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  referred_profile?: {
+    display_name: string | null;
+    verification_status: VerificationStatus;
+    created_at: string;
+  } | null;
+}
+
+export interface ReferralStats {
+  total: number;
+  registered: number;
+  verified: number;
+  qualified: number;
+  rewarded: number;
+  earnings_lkr: number;
+}
+
+export type ReferralGameStatus =
+  | 'draft'
+  | 'published'
+  | 'live'
+  | 'ended'
+  | 'cancelled';
+
+export interface ReferralGame {
+  id: string;
+  title: string;
+  description: string | null;
+  status: ReferralGameStatus;
+  is_enabled: boolean;
+  starts_at: string;
+  ends_at: string;
+  points_per_qualified: number;
+  min_qualified_for_leaderboard: number;
+  leaderboard_size: number;
+  prize_amount_lkr: number;
+  max_winners: number;
+  prize_enabled: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReferralGameLeaderboardEntry {
+  rank: number;
+  user_id: string;
+  display_name: string | null;
+  qualified_count: number;
+  score: number;
+  first_qualified_at: string | null;
+}
+
+export interface ReferralGameWinner {
+  id: string;
+  game_id: string;
+  user_id: string;
+  rank: number;
+  score: number;
+  qualified_count: number;
+  prize_amount_lkr: number;
+  prize_awarded: boolean;
+  prize_transaction_id: string | null;
+  admin_note: string | null;
+  selected_by: string | null;
+  selected_at: string;
+  awarded_at: string | null;
+  created_at: string;
+  profiles?: { display_name?: string | null } | null;
+}

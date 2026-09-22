@@ -413,3 +413,65 @@ Referral system, learning content, papers, AI tools, etc.
 ## License
 
 Private / proprietary – all rights reserved unless otherwise stated.
+
+---
+
+## Phase 4 — Referral system & Referral Game
+
+### What was added
+
+- Unique referral codes (auto on signup)
+- Referral links: `/register?ref=CODE`
+- Secure attribution via `handle_new_user` metadata (no client-trusted IDs)
+- Qualification when referred user becomes **verified**
+- Automatic referral reward via `wallet_credit` (`referral_bonus`)
+- User Referral dashboard (stats, list, copy/share, game leaderboard)
+- Admin Referrals (overview + reward config)
+- Referral Game (create/edit, leaderboard, select winner, award prize)
+- Migration `004_phase4_referral_system.sql`
+
+### Supabase setup (required)
+
+1. SQL Editor → run **`004_phase4_referral_system.sql`** (after 001–003)
+2. No new storage buckets required
+3. Auth Site URL / Redirect URLs must include production domain
+
+### Admin setup
+
+1. **Admin → Referrals**
+   - Toggle reward on/off
+   - Set LKR amount per qualified referral
+2. **Admin → Referral Game**
+   - New game → set dates, points, prize
+   - Status `published`/`live` + **Enabled**
+   - Leaderboard → Select winner → Award prize
+
+### User test
+
+1. User A copies referral code/link
+2. User B opens `/register?ref=CODE` and registers
+3. Admin verifies User B (or complete verification flow)
+4. User A gets `referral_bonus` transaction + wallet credit
+5. During a live Referral Game, qualified counts rank on the leaderboard
+
+### Security
+
+- Self-referral blocked (DB constraint + trigger)
+- One referral row per referred user (`referred_id` UNIQUE)
+- Rewards/prizes only via SECURITY DEFINER RPCs
+- Users cannot change qualification or scores
+
+### Env
+
+Same as Phase 3:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SITE_URL` (used for share links)
+
+### Known limitations
+
+- Single-level referrals only (no multi-level MLM)
+- Qualification tied to verification_status = verified
+- Referral Game scores from qualified referrals inside game time window only
+

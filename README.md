@@ -1,5 +1,5 @@
 # Nihongo Rewards – Japanese Learning & Rewards Platforbm
-
+h
 **Phase 1 Foundation** – Authentication, roles, database schema, design system, navigation, admin panel structbsbure.
 jsjs
 

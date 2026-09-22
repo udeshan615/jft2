@@ -1,6 +1,7 @@
 # Nihongo Rewards – Japanese Learning & Rewards Platform
 
 **Phase 1 Foundation** – Authentication, roles, database schema, design system, navigation, admin panel structure.
+jsjs
 
 A production-quality foundation for a Japanese learning application with rewards, verification, referrals, and educational content. Built for Vercel + Supabase.
 

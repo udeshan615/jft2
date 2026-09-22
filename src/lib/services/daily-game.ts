@@ -47,7 +47,6 @@ export async function getGameById(id: string): Promise<DailyGame | null> {
   return (data as DailyGame) ?? null;
 }
 
-/** Questions for player — strip correct answers */
 export async function getGameQuestionsForPlayer(
   gameId: string
 ): Promise<Omit<DailyGameQuestion, 'correct_option_id'>[]> {
@@ -111,122 +110,19 @@ export async function getLeaderboard(
 
   if (!data) return [];
 
-  return (data as unknown as Array<{
-    id: string;
-    user_id: string;
-    score: number;
-    duration_ms: number | null;
-    submitted_at: string | null;
-    profiles?: { display_name?: string | null } | { display_name?: string | null }[] | null;
-  }>).map((r, i) => {
-    const profile = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
-    return {
-      rank: i + 1,
-      user_id: r.user_id,
-      display_name: profile?.display_name ?? null,
-      score: r.score,
-      duration_ms: r.duration_ms,
-      submitted_at: r.submitted_at,
-      attempt_id: r.id,
-    };
-  });
-}
-
-export async function getAllGamesAdmin(): Promise<DailyGame[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from('daily_games')
-    .select('*')
-    .order('starts_at', { ascending: false });
-  return (data as DailyGame[]) ?? [];
-}    )[0];
-  if (upcoming) return upcoming;
-  // Latest ended
-  return games[0] ?? null;
-}
-
-export async function getGameById(id: string): Promise<DailyGame | null> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from('daily_games')
-    .select('*')
-    .eq('id', id)
-    .maybeSingle();
-  return (data as DailyGame) ?? null;
-}
-
-/** Questions for player — strip correct answers */
-export async function getGameQuestionsForPlayer(
-  gameId: string
-): Promise<Omit<DailyGameQuestion, 'correct_option_id'>[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from('daily_game_questions')
-    .select(
-      'id, game_id, question_text, question_type, image_url, options, points, sort_order, created_at, updated_at'
-    )
-    .eq('game_id', gameId)
-    .order('sort_order', { ascending: true });
-  return (data as Omit<DailyGameQuestion, 'correct_option_id'>[]) ?? [];
-}
-
-export async function getGameQuestionsAdmin(
-  gameId: string
-): Promise<DailyGameQuestion[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from('daily_game_questions')
-    .select('*')
-    .eq('game_id', gameId)
-    .order('sort_order', { ascending: true });
-  return (data as DailyGameQuestion[]) ?? [];
-}
-
-export async function getUserAttempt(
-  gameId: string,
-  userId: string
-): Promise<DailyGameAttempt | null> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from('daily_game_attempts')
-    .select('*')
-    .eq('game_id', gameId)
-    .eq('user_id', userId)
-    .eq('status', 'submitted')
-    .maybeSingle();
-  return (data as DailyGameAttempt) ?? null;
-}
-
-export async function getLeaderboard(
-  gameId: string,
-  limit = 10
-): Promise<LeaderboardEntry[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from('daily_game_attempts')
-    .select(
-      `
-      id, user_id, score, duration_ms, submitted_at,
-      profiles:user_id ( display_name )
-    `
-    )
-    .eq('game_id', gameId)
-    .eq('status', 'submitted')
-    .order('score', { ascending: false })
-    .order('duration_ms', { ascending: true })
-    .order('submitted_at', { ascending: true })
-    .limit(limit);
-
-  if (!data) return [];
-
-  return (data as unknown as Array<{
-    id: string;
-    user_id: string;
-    score: number;
-    duration_ms: number | null;
-    submitted_at: string | null;
-    profiles?: { display_name?: string | null } | { display_name?: string | null }[] | null;
-  }>).map((r, i) => {
+  return (
+    data as unknown as Array<{
+      id: string;
+      user_id: string;
+      score: number;
+      duration_ms: number | null;
+      submitted_at: string | null;
+      profiles?:
+        | { display_name?: string | null }
+        | { display_name?: string | null }[]
+        | null;
+    }>
+  ).map((r, i) => {
     const profile = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
     return {
       rank: i + 1,

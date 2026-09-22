@@ -1,0 +1,34 @@
+import { Suspense } from 'react';
+import Link from 'next/link';
+import { LoginForm } from '@/components/auth/login-form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
+
+export const metadata = {
+  title: 'Sign in',
+};
+
+export default function LoginPage() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12">
+      <div className="mb-8 text-center">
+        <Link href="/" className="inline-flex items-center gap-2">
+          <span className="text-2xl font-semibold text-primary">日本語</span>
+          <span className="text-sm text-muted-foreground">Rewards</span>
+        </Link>
+      </div>
+
+      <Card className="w-full max-w-md animate-scale-in shadow-md">
+        <CardHeader className="text-center">
+          <CardTitle>Welcome back</CardTitle>
+          <CardDescription>Sign in to continue learning and earning</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Suspense fallback={<div className="flex justify-center py-8"><Spinner /></div>}>
+            <LoginForm />
+          </Suspense>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

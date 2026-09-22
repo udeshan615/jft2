@@ -1,0 +1,31 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/empty-state';
+
+export const metadata = { title: 'Admin · Model Papers' };
+
+export default function Page() {
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Model Papers</h1>
+        <p className="text-muted-foreground">
+          Manage Model Papers settings and data.
+        </p>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Model Papers</CardTitle>
+          <CardDescription>
+            This section will be fully implemented in a later phase.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <EmptyState
+            title="Coming soon"
+            description="The admin controls for this area are part of Phase 2+ development. The navigation and database architecture are already in place."
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -129,23 +129,29 @@ export function DailyGameAdmin({ games: initial, adminId }: Props) {
       .order('score', { ascending: false })
       .order('duration_ms', { ascending: true })
       .limit(20);
+    const rows = (lb ?? []) as unknown as Array<{
+      id: string;
+      user_id: string;
+      score: number;
+      duration_ms: number | null;
+      submitted_at: string | null;
+      profiles?: { display_name?: string | null } | { display_name?: string | null }[] | null;
+    }>;
     setLeaderboard(
-      (lb || []).map((row: {
-        id: string;
-        user_id: string;
-        score: number;
-        duration_ms: number | null;
-        submitted_at: string | null;
-        profiles?: { display_name?: string | null } | null;
-      }, i: number) => ({
-        rank: i + 1,
-        user_id: row.user_id,
-        display_name: row.profiles?.display_name ?? null,
-        score: row.score,
-        duration_ms: row.duration_ms,
-        submitted_at: row.submitted_at,
-        attempt_id: row.id,
-      }))
+      rows.map((row, i) => {
+        const profile = Array.isArray(row.profiles)
+          ? row.profiles[0]
+          : row.profiles;
+        return {
+          rank: i + 1,
+          user_id: row.user_id,
+          display_name: profile?.display_name ?? null,
+          score: row.score,
+          duration_ms: row.duration_ms,
+          submitted_at: row.submitted_at,
+          attempt_id: row.id,
+        };
+      })
     );
   }
 

@@ -1,4 +1,4 @@
-# Nihongo Rewards – Japanese Learning & Rewards Platform
+# Nihongo Rewards – Japanese Learning & Rewards Platforbm
 
 **Phase 1 Foundation** – Authentication, roles, database schema, design system, navigation, admin panel structbsbure.
 jsjs

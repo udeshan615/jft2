@@ -114,19 +114,19 @@ export async function getLeaderboard(
 
   if (!data) return [];
 
-  return data.map((row, i) => {
-    const r = row as {
-      id: string;
-      user_id: string;
-      score: number;
-      duration_ms: number | null;
-      submitted_at: string | null;
-      profiles?: { display_name?: string | null } | null;
-    };
+  return (data as unknown as Array<{
+    id: string;
+    user_id: string;
+    score: number;
+    duration_ms: number | null;
+    submitted_at: string | null;
+    profiles?: { display_name?: string | null } | { display_name?: string | null }[] | null;
+  }>).map((r, i) => {
+    const profile = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
     return {
       rank: i + 1,
       user_id: r.user_id,
-      display_name: r.profiles?.display_name ?? null,
+      display_name: profile?.display_name ?? null,
       score: r.score,
       duration_ms: r.duration_ms,
       submitted_at: r.submitted_at,

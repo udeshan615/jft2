@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   BadgeCheck,
@@ -52,6 +52,44 @@ export function VerificationClient({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  // Server-side auto-approve: call DB function so pending WhatsApp proofs
+  // become approved after the configured delay (default 10 minutes).
+  useEffect(() => {
+    let cancelled = false;
+    async function tick() {
+      const supabase = createClient();
+      await supabase.rpc('run_due_auto_approvals');
+      await supabase.rpc('try_auto_complete_referral_task', { p_user_id: userId });
+      if (!cancelled) router.refresh();
+    }
+    tick();
+    const id = setInterval(tick, 30_000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [userId, router]);
+
+  // Fire verification success email once when status becomes verified
+  useEffect(() => {
+    if (overallStatus !== 'verified') return;
+    const key = `verification_email_sent_${userId}`;
+    if (typeof window !== 'undefined' && sessionStorage.getItem(key)) return;
+    fetch('/api/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'verification_success', userId }),
+    })
+      .then(() => {
+        try {
+          sessionStorage.setItem(key, '1');
+        } catch {
+          /* ignore */
+        }
+      })
+      .catch(() => {});
+  }, [overallStatus, userId]);
 
   async function markIntroSeen() {
     setShowIntro(false);
@@ -160,20 +198,8 @@ export function VerificationClient({
     if (existing?.status === 'approved') return;
 
     const supabase = createClient();
-    if (existing) {
-      // User cannot self-approve – only mark that requirement is met;
-      // admin or a server job should approve. For referral_count we
-      // create a pending submission so admin can auto-approve, OR
-      // we call a controlled update if already pending.
-      return;
-    }
-
-    await supabase.from('verification_submissions').insert({
-      user_id: userId,
-      task_id: task.id,
-      status: 'pending',
-      proof_metadata: { referral_count: current, required },
-    });
+    // Server-side auto-complete when 2 valid referrals are reached
+    await supabase.rpc('try_auto_complete_referral_task', { p_user_id: userId });
     router.refresh();
   }
 
@@ -341,7 +367,7 @@ export function VerificationClient({
                         )}
                         {state === 'done' && (
                           <p className="text-sm text-success">
-                            Submitted for review. An admin will verify shortly.
+                            Submitted. Verification is processing — usually completes within about 10 minutes.
                           </p>
                         )}
                         {sub?.status === 'rejected' && sub.admin_notes && (
@@ -360,7 +386,7 @@ export function VerificationClient({
                     {sub?.status === 'pending' && state === 'idle' && (
                       <p className="flex items-center gap-2 text-sm text-muted-foreground">
                         <ImageIcon className="h-4 w-4" />
-                        Screenshot submitted — waiting for admin review
+                        Screenshot submitted — verification in progress (auto-completes in ~10 minutes)
                       </p>
                     )}
                   </>

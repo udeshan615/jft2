@@ -97,6 +97,26 @@ export function EarningsClient({
     parseSetting(settings.payment_bank_enabled, 'true') === 'true';
   const mobileEnabled =
     parseSetting(settings.payment_mobile_enabled, 'true') === 'true';
+  const bankFeeEnabled =
+    parseSetting(settings.bank_fee_enabled, 'true') === 'true';
+  const bankFeeAmount = Number(parseSetting(settings.bank_fee_amount, '30'));
+
+  const selectedPm = pms.find((p) => p.id === wdPmId);
+  const isBankWd = selectedPm?.type === 'bank';
+  const appliedFee = isBankWd && bankFeeEnabled ? bankFeeAmount : 0;
+  const wdNum = Number(wdAmount) || 0;
+  const totalDeduct = wdNum + appliedFee;
+
+  function canSavePm() {
+    if (pmType === 'bank') {
+      return Boolean(
+        pmForm.account_name.trim() &&
+          pmForm.bank_name.trim() &&
+          pmForm.account_number.trim()
+      );
+    }
+    return Boolean(pmForm.phone_number.trim());
+  }
 
   async function savePaymentMethod() {
     setError(null);
@@ -185,8 +205,17 @@ export function EarningsClient({
       setError('Enter a valid amount');
       return;
     }
-    if (amount > balance) {
-      setError('Amount exceeds available balance');
+    const feeNow = (() => {
+      const pm = pms.find((p) => p.id === wdPmId);
+      if (pm?.type === 'bank' && bankFeeEnabled) return bankFeeAmount;
+      return 0;
+    })();
+    if (amount + feeNow > balance) {
+      setError(
+        feeNow > 0
+          ? `Insufficient balance (need Rs. ${(amount + feeNow).toLocaleString()} including bank fee Rs. ${feeNow})`
+          : 'Amount exceeds available balance'
+      );
       return;
     }
     if (amount < minWd) {
@@ -222,6 +251,32 @@ export function EarningsClient({
     setMsg('Withdrawal request submitted');
     setLoading(false);
     submitting.current = false;
+
+    // Optional withdrawal email (server respects admin toggle)
+    try {
+      const pm = pms.find((p) => p.id === wdPmId);
+      await fetch('/api/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'withdrawal_confirmation',
+          userId,
+          meta: {
+            amount: String(amount),
+            fee: String(appliedFee),
+            total: String(amount + appliedFee),
+            payment_method:
+              pm?.type === 'bank'
+                ? `Bank: ${pm.bank_name || pm.label || ''}`
+                : `Mobile Reload: ${pm?.phone_number || ''}`,
+            status: 'pending',
+          },
+        }),
+      });
+    } catch {
+      /* non-blocking */
+    }
+
     router.refresh();
   }
 
@@ -515,7 +570,7 @@ export function EarningsClient({
             >
               {bankEnabled && <option value="bank">Bank account</option>}
               {mobileEnabled && (
-                <option value="mobile_money">Phone / mobile money</option>
+                <option value="mobile_money">Mobile Reload</option>
               )}
             </Select>
           </div>
@@ -592,9 +647,19 @@ export function EarningsClient({
             />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button className="w-full" onClick={savePaymentMethod} disabled={loading}>
-            {loading ? <Spinner size="sm" /> : 'Save'}
-          </Button>
+          {canSavePm() ? (
+            <Button
+              className="w-full min-h-[48px] text-base"
+              onClick={savePaymentMethod}
+              disabled={loading}
+            >
+              {loading ? <Spinner size="sm" /> : 'Confirm / Save Payment Method'}
+            </Button>
+          ) : (
+            <p className="text-center text-sm text-muted-foreground">
+              Fill in the required fields to enable Save
+            </p>
+          )}
         </div>
       </Modal>
 
@@ -628,16 +693,28 @@ export function EarningsClient({
             >
               {pms.map((pm) => (
                 <option key={pm.id} value={pm.id}>
-                  {pm.label || pm.bank_name || pm.phone_number} ({pm.type})
+                  {pm.label || pm.bank_name || pm.phone_number} ({pm.type === 'bank' ? 'Bank' : 'Mobile Reload'})
                 </option>
               ))}
             </Select>
           </div>
+          {isBankWd && bankFeeEnabled && (
+            <div className="rounded-xl border border-border bg-muted/40 p-3 text-sm space-y-1">
+              <div className="flex justify-between"><span>Withdrawal</span><span>Rs. {wdNum.toLocaleString()}</span></div>
+              <div className="flex justify-between"><span>Bank fee</span><span>Rs. {appliedFee.toLocaleString()}</span></div>
+              <div className="flex justify-between font-semibold border-t border-border pt-1"><span>Total deducted</span><span>Rs. {totalDeduct.toLocaleString()}</span></div>
+            </div>
+          )}
+          {selectedPm?.type === 'mobile_money' && (
+            <p className="text-xs text-muted-foreground">
+              Mobile Reload: only mobile number is used. No bank fee applied.
+            </p>
+          )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button
-            className="w-full"
+            className="w-full min-h-[48px] text-base"
             onClick={submitWithdrawal}
-            disabled={loading}
+            disabled={loading || !wdAmount || !wdPmId}
           >
             {loading ? <Spinner size="sm" /> : 'Confirm withdrawal'}
           </Button>

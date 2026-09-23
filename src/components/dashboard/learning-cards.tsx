@@ -10,6 +10,8 @@ import {
   BookOpen,
   Headphones,
   BookMarked,
+  MessageCircle,
+  Type,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils/cn';
@@ -19,7 +21,7 @@ const modules = [
     title: 'Daily Game',
     desc: 'Play daily & earn',
     icon: Gamepad2,
-    href: '/earnings',
+    href: '/daily-game',
     accent: 'from-primary/15 to-primary/5',
     iconColor: 'text-primary',
   },
@@ -27,7 +29,7 @@ const modules = [
     title: 'Model Papers',
     desc: 'Practice papers',
     icon: FileText,
-    href: '#',
+    href: '/learning/model-papers',
     accent: 'from-sky-500/15 to-sky-500/5',
     iconColor: 'text-sky-700',
   },
@@ -35,49 +37,65 @@ const modules = [
     title: 'Past Papers',
     desc: 'Exam archives',
     icon: ScrollText,
-    href: '#',
+    href: '/learning/past-papers',
     accent: 'from-violet-500/15 to-violet-500/5',
     iconColor: 'text-violet-700',
   },
   {
-    title: 'JFT New Update',
-    desc: 'Latest updates',
+    title: 'Practice',
+    desc: 'Practice questions',
     icon: Sparkles,
-    href: '#',
+    href: '/learning/practice',
     accent: 'from-amber-500/15 to-amber-500/5',
     iconColor: 'text-amber-700',
   },
   {
-    title: 'Kanji Practice',
+    title: 'Kanji',
     desc: 'Master characters',
     icon: Languages,
-    href: '#',
+    href: '/learning/kanji',
     accent: 'from-rose-500/15 to-rose-500/5',
     iconColor: 'text-rose-700',
   },
   {
-    title: 'Grammar Practice',
+    title: 'Grammar',
     desc: 'Build structure',
     icon: BookOpen,
-    href: '#',
+    href: '/learning/grammar',
     accent: 'from-emerald-500/15 to-emerald-500/5',
     iconColor: 'text-emerald-700',
   },
   {
-    title: 'Listening Practice',
+    title: 'Listening',
     desc: 'Train your ear',
     icon: Headphones,
-    href: '#',
+    href: '/learning/listening',
     accent: 'from-indigo-500/15 to-indigo-500/5',
     iconColor: 'text-indigo-700',
   },
   {
-    title: 'Reading Practice',
+    title: 'Reading',
     desc: 'Improve fluency',
     icon: BookMarked,
-    href: '#',
+    href: '/learning/reading',
     accent: 'from-teal-500/15 to-teal-500/5',
     iconColor: 'text-teal-700',
+  },
+  {
+    title: 'Kaiwa',
+    desc: 'Conversations',
+    icon: MessageCircle,
+    href: '/learning/listening',
+    accent: 'from-orange-500/15 to-orange-500/5',
+    iconColor: 'text-orange-700',
+  },
+  {
+    title: 'Rōmaji',
+    desc: 'Pronunciation',
+    icon: Type,
+    href: '/learning',
+    accent: 'from-cyan-500/15 to-cyan-500/5',
+    iconColor: 'text-cyan-700',
   },
 ];
 
@@ -90,43 +108,32 @@ export function LearningCards() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {modules.map((m) => {
           const Icon = m.icon;
-          const content = (
-            <Card
-              className={cn(
-                'group h-full overflow-hidden transition-all duration-200 hover:shadow-md active:scale-[0.98]'
-              )}
-            >
-              <CardContent className="flex flex-col items-start gap-3 p-4">
-                <div
-                  className={cn(
-                    'flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br transition-transform duration-200 group-hover:scale-105',
-                    m.accent
-                  )}
-                >
-                  <Icon className={cn('h-5 w-5', m.iconColor)} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium leading-tight">
-                    {m.title}
-                  </h3>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {m.desc}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          );
-
-          if (m.href === '#') {
-            return (
-              <div key={m.title} className="opacity-90">
-                {content}
-              </div>
-            );
-          }
           return (
-            <Link key={m.title} href={m.href} className="block">
-              {content}
+            <Link key={m.title} href={m.href} className="block min-h-[44px]">
+              <Card
+                className={cn(
+                  'group h-full overflow-hidden transition-all duration-200 hover:shadow-md active:scale-[0.98] cursor-pointer'
+                )}
+              >
+                <CardContent className="flex flex-col items-start gap-3 p-4">
+                  <div
+                    className={cn(
+                      'flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br transition-transform duration-200 group-hover:scale-105',
+                      m.accent
+                    )}
+                  >
+                    <Icon className={cn('h-5 w-5', m.iconColor)} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium leading-tight">
+                      {m.title}
+                    </h3>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {m.desc}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             </Link>
           );
         })}

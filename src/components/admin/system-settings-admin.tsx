@@ -47,6 +47,14 @@ const EDITABLE_KEYS = [
   'support_email',
   'min_withdrawal_amount',
   'referral_percentage',
+  'bank_fee_enabled',
+  'bank_fee_amount',
+  'verification_email_enabled',
+  'withdrawal_email_enabled',
+  'verification_auto_approve_minutes',
+  'email_from_name',
+  'homepage_hero_title',
+  'homepage_hero_subtitle',
 ];
 
 export function SystemSettingsAdmin({ settings: initial }: Props) {
@@ -69,11 +77,21 @@ export function SystemSettingsAdmin({ settings: initial }: Props) {
     for (const key of EDITABLE_KEYS) {
       if (!(key in values)) continue;
       let store: string | boolean | number = values[key];
-      if (key === 'daily_game_enabled') {
+      if (
+        key === 'daily_game_enabled' ||
+        key === 'bank_fee_enabled' ||
+        key === 'verification_email_enabled' ||
+        key === 'withdrawal_email_enabled' ||
+        key === 'payment_bank_enabled' ||
+        key === 'payment_mobile_enabled'
+      ) {
         store = values[key] === 'true' || values[key] === '1';
       } else if (
         key === 'min_withdrawal_amount' ||
-        key === 'referral_percentage'
+        key === 'max_withdrawal_amount' ||
+        key === 'referral_percentage' ||
+        key === 'bank_fee_amount' ||
+        key === 'verification_auto_approve_minutes'
       ) {
         store = Number(values[key]) || 0;
       }
@@ -200,9 +218,36 @@ export function SystemSettingsAdmin({ settings: initial }: Props) {
         </CardHeader>
         <CardContent className="space-y-4">
           {field('payment_bank_enabled', 'Bank accounts enabled', undefined, 'toggle')}
-          {field('payment_mobile_enabled', 'Mobile money enabled', undefined, 'toggle')}
+          {field('payment_mobile_enabled', 'Mobile Reload enabled', undefined, 'toggle')}
           {field('min_withdrawal_amount', 'Minimum withdrawal (LKR)', undefined, 'number')}
           {field('max_withdrawal_amount', 'Maximum withdrawal (LKR, 0 = no max)', undefined, 'number')}
+          {field('bank_fee_enabled', 'Bank withdrawal fee ON/OFF', 'When ON, fee is deducted on bank withdrawals only', 'toggle')}
+          {field('bank_fee_amount', 'Bank fee amount (LKR)', 'Default Rs. 30', 'number')}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Email notifications</CardTitle>
+          <CardDescription>
+            Toggle system emails. Credentials stay server-side only (EMAIL_USER / EMAIL_APP_PASSWORD).
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {field('verification_email_enabled', 'Verification Success Email', 'Send email when user becomes verified', 'toggle')}
+          {field('withdrawal_email_enabled', 'Withdrawal Email', 'Send confirmation after withdrawal request', 'toggle')}
+          {field('email_from_name', 'Sender display name')}
+          {field('verification_auto_approve_minutes', 'WhatsApp auto-approve delay (minutes)', 'Default 10 — backend enforced', 'number')}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Homepage content</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {field('homepage_hero_title', 'Hero title')}
+          {field('homepage_hero_subtitle', 'Hero subtitle', undefined, 'textarea')}
         </CardContent>
       </Card>
 

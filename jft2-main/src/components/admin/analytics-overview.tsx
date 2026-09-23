@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { formatLkr } from '@/lib/utils/format';
 import {
   Users,
   BadgeCheck,
@@ -69,7 +70,7 @@ export function AnalyticsOverview() {
   }, [load]);
 
   function fmt(n: number) {
-    return `LKR ${Number(n || 0).toLocaleString()}`;
+    return formatLkr(n);
   }
 
   const cards = data

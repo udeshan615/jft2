@@ -1,3 +1,4 @@
+import { formatLkr, formatDateTime } from '@/lib/utils/format';
 'use client';
 
 import { useState } from 'react';
@@ -81,13 +82,13 @@ export function CommissionsAdmin({
                 <div className="text-sm space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-medium">
-                      LKR {Number(c.amount_lkr).toLocaleString()}
+                      {formatLkr(c.amount_lkr)}
                     </span>
                     <Badge variant="outline">{c.status}</Badge>
                     <span className="text-muted-foreground">{c.source}</span>
                   </div>
                   <p className="text-muted-foreground">
-                    Base LKR {Number(c.base_amount_lkr).toLocaleString()}
+                    Base {formatLkr(c.base_amount_lkr)}
                     {c.percent != null ? ` · ${c.percent}%` : ''}
                     {' · '}
                     {new Date(c.created_at).toLocaleString()}

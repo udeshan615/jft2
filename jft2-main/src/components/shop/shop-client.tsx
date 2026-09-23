@@ -1,3 +1,4 @@
+import { formatLkr } from '@/lib/utils/format';
 'use client';
 
 import { useState } from 'react';
@@ -31,7 +32,7 @@ export function ShopList({ products }: { products: Product[] }) {
             </CardHeader>
             <CardContent className="flex items-center justify-between">
               <span className="text-lg font-semibold text-primary">
-                LKR {Number(p.price_lkr).toLocaleString()}
+                {formatLkr(p.price_lkr)}
               </span>
               {p.category && <Badge variant="outline">{p.category}</Badge>}
             </CardContent>
@@ -90,7 +91,7 @@ export function ProductDetailClient({
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl text-primary">
-            LKR {Number(product.price_lkr).toLocaleString()}
+            {formatLkr(product.price_lkr)}
           </CardTitle>
           <CardDescription>
             Referral commission: product override or global default ({commissionPercent}%)
@@ -177,7 +178,7 @@ export function PurchasesClient({
                   <div>
                     <p className="font-medium">{o.product?.title ?? 'Product'}</p>
                     <p className="text-sm text-muted-foreground">
-                      LKR {Number(o.amount_lkr).toLocaleString()} ·{' '}
+                      {formatLkr(o.amount_lkr)} ·{' '}
                       {new Date(o.created_at).toLocaleDateString()}
                     </p>
                   </div>

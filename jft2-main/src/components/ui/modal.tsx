@@ -48,7 +48,7 @@ export function Modal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4">
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-[2px] animate-fade-in"
         onClick={onClose}
@@ -59,37 +59,39 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         className={cn(
-          'relative z-10 w-full rounded-t-2xl border border-border bg-card p-5 shadow-xl animate-slide-up sm:rounded-2xl sm:p-6',
+          'relative z-10 flex max-h-[min(92dvh,900px)] w-full flex-col rounded-t-2xl border border-border bg-card shadow-xl animate-slide-up sm:rounded-2xl',
           sizeMap[size],
           className
         )}
       >
         {(title || showClose) && (
-          <div className="mb-4 flex items-start justify-between gap-3">
-            <div>
+          <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border/60 px-4 py-3 sm:px-5 sm:py-4">
+            <div className="min-w-0">
               {title && (
-                <h2 id="modal-title" className="text-lg font-semibold tracking-tight">
+                <h2 id="modal-title" className="text-base font-semibold tracking-tight sm:text-lg">
                   {title}
                 </h2>
               )}
               {description && (
-                <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
               )}
             </div>
             {showClose && (
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="icon"
                 onClick={onClose}
                 aria-label="Close"
-                className="shrink-0"
+                className="min-h-[44px] min-w-[44px] shrink-0"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </Button>
             )}
           </div>
         )}
-        {children}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5 sm:py-5">
+          {children}
+        </div>
       </div>
     </div>
   );

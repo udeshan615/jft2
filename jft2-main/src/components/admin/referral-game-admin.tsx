@@ -1,3 +1,4 @@
+import { formatLkr } from '@/lib/utils/format';
 'use client';
 
 import { useState } from 'react';
@@ -440,7 +441,7 @@ export function ReferralGameAdmin({
                     Rank {w.rank} —{' '}
                     {(w.profiles as { display_name?: string } | null)
                       ?.display_name || w.user_id.slice(0, 8)}{' '}
-                    · LKR {Number(w.prize_amount_lkr).toLocaleString()}
+                    · {formatLkr(w.prize_amount_lkr)}
                     {w.prize_awarded ? ' · Paid' : ''}
                   </span>
                   {!w.prize_awarded && (

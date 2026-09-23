@@ -25,6 +25,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { EmptyState } from '@/components/ui/empty-state';
 import { cn } from '@/lib/utils/cn';
 import type {
+import { formatLkr, formatDateTime, friendlyError } from '@/lib/utils/format';
   Wallet as WalletType,
   Transaction,
   PaymentMethod,
@@ -42,7 +43,7 @@ interface Props {
   currentGame: DailyGame | null;
 }
 
-function fmt(n: number) {
+function formatLkr(n: number) {
   return `LKR ${Number(n).toLocaleString('en-LK', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -189,11 +190,11 @@ export function EarningsClient({
       return;
     }
     if (amount < minWd) {
-      setError(`Minimum withdrawal is ${fmt(minWd)}`);
+      setError(`Minimum withdrawal is ${formatLkr(minWd)}`);
       return;
     }
     if (maxWd > 0 && amount > maxWd) {
-      setError(`Maximum withdrawal is ${fmt(maxWd)}`);
+      setError(`Maximum withdrawal is ${formatLkr(maxWd)}`);
       return;
     }
     if (!wdPmId) {
@@ -259,20 +260,20 @@ export function EarningsClient({
             <Wallet className="h-4 w-4" /> Available balance
           </div>
           <p className="mt-2 text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
-            {fmt(balance)}
+            {formatLkr(balance)}
           </p>
           <div className="mt-4 grid grid-cols-3 gap-3 text-center">
             <div className="rounded-xl bg-card/80 px-2 py-2">
               <p className="text-[10px] uppercase text-muted-foreground">Pending</p>
-              <p className="text-sm font-medium">{fmt(pending)}</p>
+              <p className="text-sm font-medium">{formatLkr(pending)}</p>
             </div>
             <div className="rounded-xl bg-card/80 px-2 py-2">
               <p className="text-[10px] uppercase text-muted-foreground">Earned</p>
-              <p className="text-sm font-medium">{fmt(earned)}</p>
+              <p className="text-sm font-medium">{formatLkr(earned)}</p>
             </div>
             <div className="rounded-xl bg-card/80 px-2 py-2">
               <p className="text-[10px] uppercase text-muted-foreground">Withdrawn</p>
-              <p className="text-sm font-medium">{fmt(withdrawn)}</p>
+              <p className="text-sm font-medium">{formatLkr(withdrawn)}</p>
             </div>
           </div>
           <div className="mt-5 flex flex-col gap-2 sm:flex-row">
@@ -422,7 +423,7 @@ export function EarningsClient({
               className="flex items-center justify-between rounded-xl border border-border px-3 py-3"
             >
               <div>
-                <p className="text-sm font-medium">{fmt(Number(w.amount_lkr))}</p>
+                <p className="text-sm font-medium">{formatLkr(Number(w.amount_lkr))}</p>
                 <p className="text-xs text-muted-foreground">
                   {new Date(w.created_at).toLocaleString()}
                 </p>
@@ -485,7 +486,7 @@ export function EarningsClient({
                   )}
                 >
                   {t.type === 'withdrawal' || t.type === 'debit' ? '−' : '+'}
-                  {fmt(Number(t.amount_lkr))}
+                  {formatLkr(Number(t.amount_lkr))}
                 </p>
                 <Badge variant="outline" className="text-[10px]">
                   {t.status}
@@ -606,8 +607,8 @@ export function EarningsClient({
       >
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Available: <strong>{fmt(balance)}</strong> · Min: {fmt(minWd)}
-            {maxWd > 0 ? ` · Max: ${fmt(maxWd)}` : ''}
+            Available: <strong>{formatLkr(balance)}</strong> · Min: {formatLkr(minWd)}
+            {maxWd > 0 ? ` · Max: ${formatLkr(maxWd)}` : ''}
           </p>
           <div className="space-y-2">
             <Label>Amount (LKR)</Label>

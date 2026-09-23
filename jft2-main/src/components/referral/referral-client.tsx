@@ -1,3 +1,4 @@
+import { formatLkr, formatDateTime } from '@/lib/utils/format';
 'use client';
 
 import { useMemo, useState } from 'react';
@@ -137,7 +138,7 @@ export function ReferralClient({
           { label: 'Rewarded', value: stats.rewarded },
           {
             label: 'Earned',
-            value: `LKR ${stats.earnings_lkr.toLocaleString()}`,
+            value: formatLkr(stats.earnings_lkr),
           },
         ].map((s) => (
           <Card key={s.label}>
@@ -309,8 +310,7 @@ export function ReferralClient({
           )}
           {game?.prize_enabled && Number(game.prize_amount_lkr) > 0 && (
             <p className="text-center text-sm text-muted-foreground">
-              Prize pool up to LKR{' '}
-              {Number(game.prize_amount_lkr).toLocaleString()} ·{' '}
+              Prize pool up to {formatLkr(game.prize_amount_lkr)} ·{' '}
               {game.max_winners} winner(s)
             </p>
           )}

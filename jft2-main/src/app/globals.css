@@ -172,12 +172,10 @@ html, body {
 
 /* Prefer larger tap targets on touch */
 @media (pointer: coarse) {
-  button, a, [role="button"] {
+  /* Primary interactive controls — keep icons free to use explicit sizes */
+  button:not([class*="h-"]):not([class*="size-"]),
+  [role="button"]:not([class*="h-"]) {
     min-height: 44px;
-  }
-  /* Don't force height on icon-only that already have size classes */
-  button.h-8, button.h-9, button.h-10, a.h-8, a.h-9 {
-    min-height: unset;
   }
 }
 

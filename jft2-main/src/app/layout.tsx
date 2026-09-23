@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
@@ -20,6 +20,26 @@ export const metadata: Metadata = {
   description:
     'Learn Japanese, complete challenges, and earn rewards. A modern Japanese learning & rewards platform.',
   keywords: ['Japanese', 'JLPT', 'learning', 'rewards', 'Nihongo'],
+  applicationName: 'Nihongo Rewards',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Nihongo Rewards',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#faf9f7' },
+    { media: '(prefers-color-scheme: dark)', color: '#1a1a1a' },
+  ],
 };
 
 export default function RootLayout({

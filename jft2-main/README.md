@@ -1,4 +1,4 @@
-f# Nihongo Rewards – Japanese Learning & Rewards Platfborbm
+# Nihongo Rewards – Japanese Learning & Rewards Platfborbm
 h
 **Phase 1 Foundation** – Authentication, roles, database schema, design system, navigation, admin panel structbsbure.
 jsjs
@@ -680,3 +680,41 @@ supabase/migrations/007_phase7_notifications_support_analytics.sql
 ---
 
 **PHASE 7 COMPLETE — READY FOR PHASE 8**
+
+---
+
+## Phase 8 – Mobile-first UI & production polish
+
+### What improved
+
+- **Bottom navigation (phone):** Home · Earn · Refer · Contact · More  
+  Learning, Shop, Purchases, Games, Verification, Notifications, Profile, Settings, Admin live under **More**.
+- **Touch targets:** larger nav items, modal close buttons, More sheet tiles.
+- **Modals:** bottom-sheet style on phones, scrollable body, safe max height (`dvh`).
+- **Currency:** shared `formatLkr()` → always `LKR 1,234.56` style where wired.
+- **Dates:** shared `formatDateTime()` / `formatCountdown()` helpers.
+- **Errors:** `friendlyError()` hides raw PostgREST/SQL messages from users.
+- **Viewport / theme-color / apple-web-app** metadata for a more app-like browser experience.
+- **Content padding** clears the fixed bottom nav + iOS safe area.
+
+### No new database migration
+
+Phase 8 is UI/UX only. Do **not** re-run SQL unless a previous migration was skipped.
+
+### Mobile checklist (quick)
+
+1. Phone browser → log in  
+2. Bottom: Home, Earn, Refer, Contact, More  
+3. More → Learning, Shop, Notifications, Settings  
+4. Admin users: More → Admin or top bar shield  
+5. Open a withdrawal / purchase modal → scroll and Close work  
+6. Balances show as **LKR x,xxx.xx**
+
+### Known limitations
+
+- Not every historical money string may use `formatLkr` yet; primary wallet/earnings/admin analytics paths do.
+- Full offline PWA service worker is intentionally **not** added (avoids cache/security complexity).
+
+---
+
+**PHASE 8 COMPLETE — READY FOR PHASE 9**

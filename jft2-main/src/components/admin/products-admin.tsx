@@ -1,3 +1,4 @@
+import { formatLkr } from '@/lib/utils/format';
 'use client';
 
 import { useState } from 'react';
@@ -213,7 +214,7 @@ export function ProductsAdmin({ products: initial }: { products: Product[] }) {
                     <Badge variant="outline">{p.status}</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    LKR {Number(p.price_lkr).toLocaleString()}
+                    {formatLkr(p.price_lkr)}
                     {p.commission_percent != null
                       ? ` · Commission ${p.commission_percent}%`
                       : ' · Global commission'}

@@ -86,10 +86,7 @@ export default async function HomePage() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
           <Link href="/" className="flex min-w-0 items-center gap-2">
             <span className="truncate text-xl font-semibold tracking-tight text-primary sm:text-2xl">
-              日本語
-            </span>
-            <span className="hidden text-sm font-medium text-muted-foreground xs:inline sm:inline">
-              Rewards
+              Nihongo Rewards
             </span>
           </Link>
           <div className="flex shrink-0 items-center gap-2">

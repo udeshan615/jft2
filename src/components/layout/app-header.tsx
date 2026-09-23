@@ -51,10 +51,7 @@ export function AppHeader({ user }: AppHeaderProps) {
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="flex items-center gap-2">
             <span className="text-xl font-semibold tracking-tight text-primary">
-              日本語
-            </span>
-            <span className="text-sm font-medium text-muted-foreground">
-              Rewards
+              Nihongo Rewards
             </span>
           </Link>
 

@@ -11,6 +11,8 @@ interface ModalProps {
   title?: string;
   description?: string;
   children: React.ReactNode;
+  /** Sticky action bar pinned below scrollable body (e.g. Confirm button) */
+  footer?: React.ReactNode;
   className?: string;
   showClose?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -28,6 +30,7 @@ export function Modal({
   title,
   description,
   children,
+  footer,
   className,
   showClose = true,
   size = 'md',
@@ -38,10 +41,11 @@ export function Modal({
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = prev;
     };
   }, [open, onClose]);
 
@@ -59,7 +63,8 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         className={cn(
-          'relative z-10 flex max-h-[min(92dvh,900px)] w-full flex-col rounded-t-2xl border border-border bg-card shadow-xl animate-slide-up sm:rounded-2xl',
+          // Use dvh so mobile browser chrome / keyboard does not clip the sheet
+          'relative z-10 flex w-full max-h-[min(92dvh,900px)] flex-col rounded-t-2xl border border-border bg-card shadow-xl animate-slide-up sm:rounded-2xl',
           sizeMap[size],
           className
         )}
@@ -68,12 +73,17 @@ export function Modal({
           <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border/60 px-4 py-3 sm:px-5 sm:py-4">
             <div className="min-w-0">
               {title && (
-                <h2 id="modal-title" className="text-base font-semibold tracking-tight sm:text-lg">
+                <h2
+                  id="modal-title"
+                  className="text-base font-semibold tracking-tight sm:text-lg"
+                >
                   {title}
                 </h2>
               )}
               {description && (
-                <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {description}
+                </p>
               )}
             </div>
             {showClose && (
@@ -89,9 +99,18 @@ export function Modal({
             )}
           </div>
         )}
+
+        {/* Scrollable form body — never clips the footer */}
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5 sm:py-5">
           {children}
         </div>
+
+        {/* Sticky footer: always visible above bottom edge / keyboard */}
+        {footer && (
+          <div className="shrink-0 border-t border-border/60 bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:px-5">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

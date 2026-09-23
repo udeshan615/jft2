@@ -13,8 +13,9 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12">
       <div className="mb-8 text-center">
         <Link href="/" className="inline-flex items-center gap-2">
-          <span className="text-2xl font-semibold text-primary">日本語</span>
-          <span className="text-sm text-muted-foreground">Rewards</span>
+          <span className="text-2xl font-semibold tracking-tight text-primary">
+            Nihongo Rewards
+          </span>
         </Link>
       </div>
 

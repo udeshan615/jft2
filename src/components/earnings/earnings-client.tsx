@@ -552,14 +552,36 @@ export function EarningsClient({
         </CardContent>
       </Card>
 
-      {/* Add PM modal */}
+      {/* Add PM modal — footer keeps Confirm always visible on mobile */}
       <Modal
         open={showAddPM}
-        onClose={() => setShowAddPM(false)}
+        onClose={() => {
+          if (!loading) {
+            setShowAddPM(false);
+            setError(null);
+          }
+        }}
         title="Add payment method"
         size="md"
+        footer={
+          <div className="space-y-2">
+            {error && <p className="text-sm text-destructive">{error}</p>}
+            {!canSavePm() && (
+              <p className="text-center text-xs text-muted-foreground">
+                Fill required fields to enable Confirm
+              </p>
+            )}
+            <Button
+              className="w-full min-h-[48px] text-base font-semibold"
+              onClick={savePaymentMethod}
+              disabled={loading || !canSavePm()}
+            >
+              {loading ? <Spinner size="sm" /> : 'Confirm / Save Payment Method'}
+            </Button>
+          </div>
+        }
       >
-        <div className="space-y-4">
+        <div className="space-y-4 pb-2">
           <div className="space-y-2">
             <Label>Type</Label>
             <Select
@@ -579,15 +601,18 @@ export function EarningsClient({
               <div className="space-y-2">
                 <Label>Account holder name</Label>
                 <Input
+                  className="min-h-[44px]"
                   value={pmForm.account_name}
                   onChange={(e) =>
                     setPmForm({ ...pmForm, account_name: e.target.value })
                   }
+                  autoComplete="name"
                 />
               </div>
               <div className="space-y-2">
                 <Label>Bank name</Label>
                 <Input
+                  className="min-h-[44px]"
                   value={pmForm.bank_name}
                   onChange={(e) =>
                     setPmForm({ ...pmForm, bank_name: e.target.value })
@@ -597,6 +622,7 @@ export function EarningsClient({
               <div className="space-y-2">
                 <Label>Branch (optional)</Label>
                 <Input
+                  className="min-h-[44px]"
                   value={pmForm.branch}
                   onChange={(e) =>
                     setPmForm({ ...pmForm, branch: e.target.value })
@@ -606,28 +632,34 @@ export function EarningsClient({
               <div className="space-y-2">
                 <Label>Account number</Label>
                 <Input
+                  className="min-h-[44px]"
                   value={pmForm.account_number}
                   onChange={(e) =>
                     setPmForm({ ...pmForm, account_number: e.target.value })
                   }
+                  inputMode="numeric"
                 />
               </div>
             </>
           ) : (
             <>
               <div className="space-y-2">
-                <Label>Phone number</Label>
+                <Label>Mobile number</Label>
                 <Input
+                  className="min-h-[44px]"
                   value={pmForm.phone_number}
                   onChange={(e) =>
                     setPmForm({ ...pmForm, phone_number: e.target.value })
                   }
-                  placeholder="+94..."
+                  placeholder="07XXXXXXXX"
+                  inputMode="tel"
+                  autoComplete="tel"
                 />
               </div>
               <div className="space-y-2">
                 <Label>Name (optional)</Label>
                 <Input
+                  className="min-h-[44px]"
                   value={pmForm.account_name}
                   onChange={(e) =>
                     setPmForm({ ...pmForm, account_name: e.target.value })
@@ -639,6 +671,7 @@ export function EarningsClient({
           <div className="space-y-2">
             <Label>Label (optional)</Label>
             <Input
+              className="min-h-[44px]"
               value={pmForm.label}
               onChange={(e) =>
                 setPmForm({ ...pmForm, label: e.target.value })
@@ -646,31 +679,34 @@ export function EarningsClient({
               placeholder="My HNB account"
             />
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {canSavePm() ? (
-            <Button
-              className="w-full min-h-[48px] text-base"
-              onClick={savePaymentMethod}
-              disabled={loading}
-            >
-              {loading ? <Spinner size="sm" /> : 'Confirm / Save Payment Method'}
-            </Button>
-          ) : (
-            <p className="text-center text-sm text-muted-foreground">
-              Fill in the required fields to enable Save
-            </p>
-          )}
         </div>
       </Modal>
 
-      {/* Withdraw modal */}
+      {/* Withdraw modal — Confirm sticky in footer */}
       <Modal
         open={showWithdraw}
-        onClose={() => setShowWithdraw(false)}
+        onClose={() => {
+          if (!loading) {
+            setShowWithdraw(false);
+            setError(null);
+          }
+        }}
         title="Request withdrawal"
         size="md"
+        footer={
+          <div className="space-y-2">
+            {error && <p className="text-sm text-destructive">{error}</p>}
+            <Button
+              className="w-full min-h-[48px] text-base font-semibold"
+              onClick={submitWithdrawal}
+              disabled={loading || !wdAmount || !wdPmId}
+            >
+              {loading ? <Spinner size="sm" /> : 'Confirm withdrawal'}
+            </Button>
+          </div>
+        }
       >
-        <div className="space-y-4">
+        <div className="space-y-4 pb-2">
           <p className="text-sm text-muted-foreground">
             Available: <strong>{formatLkr(balance)}</strong> · Min: {formatLkr(minWd)}
             {maxWd > 0 ? ` · Max: ${formatLkr(maxWd)}` : ''}
@@ -678,11 +714,13 @@ export function EarningsClient({
           <div className="space-y-2">
             <Label>Amount (LKR)</Label>
             <Input
+              className="min-h-[44px]"
               type="number"
               min={minWd}
               step="0.01"
               value={wdAmount}
               onChange={(e) => setWdAmount(e.target.value)}
+              inputMode="decimal"
             />
           </div>
           <div className="space-y-2">
@@ -690,19 +728,30 @@ export function EarningsClient({
             <Select
               value={wdPmId}
               onChange={(e) => setWdPmId(e.target.value)}
+              className="min-h-[44px]"
             >
               {pms.map((pm) => (
                 <option key={pm.id} value={pm.id}>
-                  {pm.label || pm.bank_name || pm.phone_number} ({pm.type === 'bank' ? 'Bank' : 'Mobile Reload'})
+                  {pm.label || pm.bank_name || pm.phone_number} (
+                  {pm.type === 'bank' ? 'Bank' : 'Mobile Reload'})
                 </option>
               ))}
             </Select>
           </div>
           {isBankWd && bankFeeEnabled && (
-            <div className="rounded-xl border border-border bg-muted/40 p-3 text-sm space-y-1">
-              <div className="flex justify-between"><span>Withdrawal</span><span>Rs. {wdNum.toLocaleString()}</span></div>
-              <div className="flex justify-between"><span>Bank fee</span><span>Rs. {appliedFee.toLocaleString()}</span></div>
-              <div className="flex justify-between font-semibold border-t border-border pt-1"><span>Total deducted</span><span>Rs. {totalDeduct.toLocaleString()}</span></div>
+            <div className="space-y-1 rounded-xl border border-border bg-muted/40 p-3 text-sm">
+              <div className="flex justify-between">
+                <span>Withdrawal</span>
+                <span>Rs. {wdNum.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Bank fee</span>
+                <span>Rs. {appliedFee.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between border-t border-border pt-1 font-semibold">
+                <span>Total deducted</span>
+                <span>Rs. {totalDeduct.toLocaleString()}</span>
+              </div>
             </div>
           )}
           {selectedPm?.type === 'mobile_money' && (
@@ -710,14 +759,6 @@ export function EarningsClient({
               Mobile Reload: only mobile number is used. No bank fee applied.
             </p>
           )}
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button
-            className="w-full min-h-[48px] text-base"
-            onClick={submitWithdrawal}
-            disabled={loading || !wdAmount || !wdPmId}
-          >
-            {loading ? <Spinner size="sm" /> : 'Confirm withdrawal'}
-          </Button>
         </div>
       </Modal>
     </div>

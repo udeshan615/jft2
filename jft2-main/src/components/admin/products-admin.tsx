@@ -1,6 +1,6 @@
-import { formatLkr } from '@/lib/utils/format';
 'use client';
 
+import { formatLkr } from '@/lib/utils/format';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';

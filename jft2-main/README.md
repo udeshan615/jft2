@@ -1,4 +1,4 @@
-h# Nihongo Rewards – Japanese Learning & Rewards Platfborbm
+# Nihongo Rewards – Japanese Learning & Rewards Platfborbm
 h
 **Phase 1 Foundation** – Authentication, roles, database schema, design system, navigation, admin panel structbsbure.
 jsjs
@@ -718,3 +718,157 @@ Phase 8 is UI/UX only. Do **not** re-run SQL unless a previous migration was ski
 ---
 
 **PHASE 8 COMPLETE — READY FOR PHASE 9**
+
+---
+
+## Phase 9 – Functional QA, integrity & production readiness
+
+### QA focus (no major new features)
+
+- Authentication & admin role resolution (admin preferred when dual roles exist)
+- Wallet withdrawals: server-side balance lock (`FOR UPDATE`), min/max, payment method ownership
+- One **pending** withdrawal per user (unique partial index)
+- Referral: self-referral blocked, one row per referred user, signup metadata attribution
+- Product commissions: `idempotency_key` unique
+- Daily game: one submitted attempt unique index
+- Client double-submit guards on withdrawal / purchase / support
+- User-facing errors via `friendlyError()` (no SQL/PostgREST leakage)
+- Currency display via `formatLkr()`
+- Mobile nav regression (Phase 8) retained
+
+### Migration 008
+
+```
+supabase/migrations/008_phase9_integrity_hardening.sql
+```
+
+Run in Supabase SQL Editor **after** 001–007 if not already applied.
+
+### Production checklist
+
+1. All migrations 001→008 applied  
+2. Vercel env: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` only (no service role in client)  
+3. First admin: secure SQL from README (never a public “make me admin” button)  
+4. `npm run build` succeeds  
+5. Test: signup → dashboard → earnings → referral → learning → logout  
+
+### Security summary
+
+| Area | Status |
+|------|--------|
+| RLS on money tables | Users cannot UPDATE wallet balances |
+| Withdrawals | SECURITY DEFINER RPC only |
+| Admin routes | `requireAdmin()` server-side |
+| Commissions | Idempotent keys |
+| Storage | Private buckets for verification |
+
+---
+
+**PHASE 9 COMPLETE — FULL QA PASSED — READY FOR PHASE 10**
+
+---
+
+## Phase 10 – Production launch readiness
+
+### Production deployment checklist
+
+#### A. Supabase
+
+1. Create/select a **production** Supabase project  
+2. Run SQL migrations **in order**: `001` → `008` (SQL Editor or CLI)  
+3. Auth → URL configuration  
+   - Site URL = your production domain (e.g. `https://yourdomain.com`)  
+   - Redirect URLs include `https://yourdomain.com/auth/callback`  
+4. Storage: create buckets required by verification/media if not created by migrations; keep private buckets private  
+5. Confirm RLS is enabled on money / user tables  
+
+#### B. Vercel
+
+1. Import the GitHub repo  
+2. Framework: **Next.js** (auto)  
+3. Environment variables (Production + Preview as needed):  
+   - `NEXT_PUBLIC_SUPABASE_URL`  
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`  
+   - `NEXT_PUBLIC_SITE_URL` = `https://yourdomain.com`  
+4. Deploy  
+5. Optional: attach **custom domain** → update Supabase Auth URLs + `NEXT_PUBLIC_SITE_URL`  
+
+#### C. First admin (secure)
+
+Never use a public “make me admin” button.
+
+In Supabase SQL Editor (replace email):
+
+```sql
+-- After the user has registered once with this email:
+INSERT INTO public.user_roles (user_id, role)
+SELECT id, 'admin'::public.user_role
+FROM public.profiles
+WHERE email = 'your-admin@example.com'
+ON CONFLICT DO NOTHING;
+
+-- If a plain "user" role also exists and UI still hides Admin, remove the user role row for that account
+-- (or rely on getCurrentUser which prefers admin when both exist).
+```
+
+Then log out and log in again.
+
+#### D. Smoke test after deploy
+
+- [ ] Register / login / logout  
+- [ ] Dashboard loads for the signed-in user  
+- [ ] Referral link uses production domain (not localhost)  
+- [ ] Earnings balance shows `LKR x,xxx.xx`  
+- [ ] Mobile bottom nav: Home · Earn · Refer · Contact · More  
+- [ ] Admin (admin account only): Overview, Withdrawals, Verification  
+- [ ] Normal user cannot open `/admin/overview`  
+
+### Backup & recovery
+
+| What | How |
+|------|-----|
+| Database | Supabase Dashboard → Database → Backups (plan-dependent) or `pg_dump` |
+| Migrations | Keep `supabase/migrations/*.sql` in git — re-run on a new project in order |
+| Storage files | Supabase Storage backup / download policies |
+| Env vars | Store outside git (1Password / Vercel); restore into Vercel + `.env.local` |
+| First admin | Re-run the admin SQL above after users exist |
+
+### Custom domain
+
+1. Vercel → Domains → add domain  
+2. Set `NEXT_PUBLIC_SITE_URL` to `https://yourdomain.com`  
+3. Supabase Auth Site URL + redirect URLs → same domain  
+4. Redeploy  
+
+Referral links use `getSiteUrl()` which prefers `NEXT_PUBLIC_SITE_URL`, else the request host (works on `*.vercel.app` until domain is set).
+
+### Security (production)
+
+- Only **anon** key in the browser  
+- No `service_role` in client or `NEXT_PUBLIC_*`  
+- Wallet mutations via SECURITY DEFINER RPCs only  
+- Admin routes gated by `requireAdmin()` + RLS `is_admin()`  
+- One pending withdrawal per user; commission idempotency keys  
+
+### Migrations list
+
+| File | Purpose |
+|------|---------|
+| 001 | Core schema, auth triggers, wallets, RLS |
+| 002 | Verification & announcements |
+| 003 | Earnings, daily game, withdrawals |
+| 004 | Referrals & referral game |
+| 005 | Learning content |
+| 006 | Products & commissions |
+| 007 | Notifications, support, FAQ, analytics |
+| 008 | Integrity indexes & constraints |
+
+### Known production limitations
+
+- Product payments are **manual admin confirmation** (no card gateway)  
+- Notifications are **in-app only** (no email/push provider)  
+- Optional AI import requires server-only API keys if enabled  
+
+---
+
+**PHASE 10 COMPLETE — PRODUCTION RELEASE READY**

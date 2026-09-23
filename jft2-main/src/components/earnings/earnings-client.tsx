@@ -135,7 +135,7 @@ export function EarningsClient({
       .single();
 
     if (err) {
-      setError(err.message);
+      setError(friendlyError(err));
       setLoading(false);
       return;
     }
@@ -211,7 +211,7 @@ export function EarningsClient({
     });
 
     if (err) {
-      setError(err.message);
+      setError(friendlyError(err));
       setLoading(false);
       submitting.current = false;
       return;

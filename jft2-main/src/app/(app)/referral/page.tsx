@@ -7,6 +7,7 @@ import {
 } from '@/lib/services/referrals';
 import { getPublicSettings } from '@/lib/services/settings';
 import { ReferralClient } from '@/components/referral/referral-client';
+import { getSiteUrl } from '@/lib/utils/site-url';
 
 export const metadata = { title: 'Referral' };
 
@@ -15,7 +16,7 @@ export default async function ReferralPage() {
   if (!user) return null;
 
   const code = user.profile?.referral_code ?? '';
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = await getSiteUrl();
 
   const [referrals, stats, game, settings] = await Promise.all([
     getMyReferrals(user.id),

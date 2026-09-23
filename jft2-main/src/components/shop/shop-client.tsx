@@ -1,6 +1,6 @@
 'use client';
 
-import { formatLkr } from '@/lib/utils/format';
+import { formatLkr, friendlyError } from '@/lib/utils/format';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -59,6 +59,7 @@ export function ProductDetailClient({
   const [orderId, setOrderId] = useState<string | null>(null);
 
   async function purchase() {
+    if (busy) return;
     setBusy(true);
     setMsg(null);
     try {
@@ -72,7 +73,7 @@ export function ProductDetailClient({
       );
       router.refresh();
     } catch (e) {
-      setMsg(e instanceof Error ? e.message : 'Could not create order');
+      setMsg(friendlyError(e));
     }
     setBusy(false);
   }

@@ -14,19 +14,29 @@ export function NotificationBell({ userId }: { userId: string }) {
   const [unread, setUnread] = useState(0);
 
   const load = useCallback(async () => {
-    const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(8);
-    setItems((data ?? []) as AppNotification[]);
-    const { count } = await supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('is_read', false);
-    setUnread(count ?? 0);
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(8);
+      if (error) {
+        setItems([]);
+        setUnread(0);
+        return;
+      }
+      setItems((data ?? []) as AppNotification[]);
+      const { count } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('is_read', false);
+      setUnread(count ?? 0);
+    } catch {
+      setItems([]);
+      setUnread(0);
+    }
   }, [supabase, userId]);
 
   useEffect(() => {
@@ -70,7 +80,7 @@ export function NotificationBell({ userId }: { userId: string }) {
             aria-label="Close notifications"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
+          <div className="absolute right-0 z-50 mt-2 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
             <div className="flex items-center justify-between border-b border-border px-3 py-2">
               <span className="text-sm font-medium">Notifications</span>
               <Link

@@ -10,6 +10,7 @@ import {
   LogOut,
   Shield,
   BookOpen,
+  ShoppingBag,
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { Avatar } from '@/components/ui/avatar';
@@ -21,6 +22,7 @@ import type { AppUser } from '@/lib/types/database';
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/learning', label: 'Learning', icon: BookOpen },
+  { href: '/shop', label: 'Shop', icon: ShoppingBag },
   { href: '/earnings', label: 'Earnings', icon: Wallet },
   { href: '/referral', label: 'Referral', icon: Users },
 ];

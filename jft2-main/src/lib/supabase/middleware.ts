@@ -50,7 +50,9 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/profile') ||
     pathname.startsWith('/verification') ||
     pathname.startsWith('/daily-game') ||
-    pathname.startsWith('/learning');
+    pathname.startsWith('/learning') ||
+    pathname.startsWith('/shop') ||
+    pathname.startsWith('/purchases');
 
   // Admin routes
   const isAdminRoute = pathname.startsWith('/admin');

@@ -1,4 +1,4 @@
-# Nihongo Rewards – Japanese Learning & Rewards Platfbohrbm
+# Nihongo Rewards – Japanese Learning & Rewards Platfborbm
 h
 **Phase 1 Foundation** – Authentication, roles, database schema, design system, navigation, admin panel structbsbure.
 jsjs
@@ -569,3 +569,66 @@ If you have both `user` and `admin` roles, the app now correctly prefers `admin`
 ---
 
 **PHASE 5 COMPLETE — READY FOR PHASE 6**
+
+---
+
+## Phase 6 – Products, Referral Commissions & Games
+
+### Features
+
+- **Paid products** (draft → published) with price, category, optional commission override
+- **Secure order flow**: user creates order → admin confirms payment → access granted
+- **Referral commissions** on qualifying purchases (global % or product-specific)
+- **Commission lifecycle**: pending → approved/paid → reversible
+- **Idempotent commission** keys (no duplicate for same order)
+- **Refund** cancels pending commissions / reverses paid ones
+- **Referral Game** (from Phase 4) + prizes via wallet
+- **Shop** `/shop`, product detail, **My Purchases** `/purchases`
+- Admin: Products, Orders, Commissions panels
+- How-it-works on Referral page uses live admin settings (not hardcoded %)
+
+### Commission priority
+
+1. Product fixed commission if set  
+2. Else product commission % if set  
+3. Else global `referral_commission_percent`  
+4. If commission disabled globally or on product → none  
+
+### Migration
+
+Run after 001–005:
+
+```
+supabase/migrations/006_phase6_products_commissions.sql
+```
+
+### Payment note
+
+There is **no automatic card gateway** in this phase. Provider setting defaults to `manual`.
+
+1. User clicks Purchase → order `awaiting_payment`
+2. User pays offline / bank transfer as you instruct
+3. Admin → Orders → **Confirm paid** (only after real payment)
+4. Access granted + pending commission created if referrer exists
+
+Do **not** treat browser success as payment. Wire a real provider later via `payment_provider` setting.
+
+### Environment
+
+Same as previous phases. Optional:
+
+```
+NEXT_PUBLIC_SITE_URL=https://your-production-domain.com
+```
+
+Used for referral links (`/register?ref=CODE`).
+
+### Known limitations
+
+- Manual/admin payment confirmation (by design until a gateway is connected)
+- Product image upload UI is minimal (URL/field via future enhancement)
+- Attribution window cookie is documented; signup uses `?ref=` + user_metadata primarily
+
+---
+
+**PHASE 6 COMPLETE — READY FOR PHASE 7**

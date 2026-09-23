@@ -675,3 +675,102 @@ export interface ExtractedKanjiDraft {
   confidence: 'high' | 'medium' | 'low' | 'needs_review';
   raw_segment?: string;
 }
+
+// ---- Phase 6: Products & Commissions ----
+export type ProductStatus = 'draft' | 'published' | 'disabled' | 'archived';
+export type OrderStatus =
+  | 'pending'
+  | 'awaiting_payment'
+  | 'paid'
+  | 'failed'
+  | 'cancelled'
+  | 'refunded';
+export type CommissionStatus =
+  | 'pending'
+  | 'approved'
+  | 'paid'
+  | 'reversed'
+  | 'cancelled';
+export type AccessStatus = 'active' | 'revoked' | 'expired';
+
+export interface Product {
+  id: string;
+  title: string;
+  slug: string | null;
+  description: string | null;
+  short_description: string | null;
+  image_url: string | null;
+  price_lkr: number;
+  currency: string;
+  category: string | null;
+  status: ProductStatus;
+  is_available: boolean;
+  whats_included: string | null;
+  commission_enabled: boolean;
+  commission_percent: number | null;
+  commission_fixed_lkr: number | null;
+  sort_order: number;
+  metadata: Record<string, unknown>;
+  created_by: string | null;
+  updated_by: string | null;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProductOrder {
+  id: string;
+  user_id: string;
+  product_id: string;
+  amount_lkr: number;
+  currency: string;
+  status: OrderStatus;
+  payment_provider: string | null;
+  payment_reference: string | null;
+  payment_note: string | null;
+  referrer_id: string | null;
+  referral_id: string | null;
+  access_granted: boolean;
+  paid_at: string | null;
+  cancelled_at: string | null;
+  refunded_at: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  product?: Product | null;
+}
+
+export interface ProductAccess {
+  id: string;
+  user_id: string;
+  product_id: string;
+  order_id: string | null;
+  status: AccessStatus;
+  granted_at: string;
+  revoked_at: string | null;
+  product?: Product | null;
+}
+
+export interface ReferralCommission {
+  id: string;
+  referrer_id: string;
+  referred_id: string | null;
+  referral_id: string | null;
+  order_id: string | null;
+  product_id: string | null;
+  source: string;
+  status: CommissionStatus;
+  base_amount_lkr: number;
+  percent: number | null;
+  amount_lkr: number;
+  transaction_id: string | null;
+  reversal_transaction_id: string | null;
+  idempotency_key: string | null;
+  admin_note: string | null;
+  approved_by: string | null;
+  approved_at: string | null;
+  paid_at: string | null;
+  reversed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}

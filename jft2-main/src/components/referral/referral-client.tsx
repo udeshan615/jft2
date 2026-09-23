@@ -37,6 +37,8 @@ export function ReferralClient({
   leaderboard,
   myRank,
   myQualifiedInGame,
+  commissionPercent = 10,
+  requireVerification = true,
 }: {
   code: string;
   siteUrl: string;
@@ -46,6 +48,8 @@ export function ReferralClient({
   leaderboard: ReferralGameLeaderboardEntry[];
   myRank: number | null;
   myQualifiedInGame: number;
+  commissionPercent?: number;
+  requireVerification?: boolean;
 }) {
   const [copied, setCopied] = useState<'code' | 'link' | null>(null);
   const link = useMemo(
@@ -92,6 +96,40 @@ export function ReferralClient({
 
   return (
     <div className="space-y-6">
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">How referrals work</CardTitle>
+          <CardDescription>Rules come from admin settings and may change.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <ol className="list-decimal space-y-1 pl-5">
+            <li>Share your referral link or code.</li>
+            <li>A new user registers through your link.</li>
+            <li>
+              They become eligible
+              {requireVerification
+                ? ' after verification (if required by settings)'
+                : ' according to configured rules'}
+              .
+            </li>
+            <li>
+              When they make a qualifying purchase, you can earn about{' '}
+              <span className="font-medium text-foreground">{commissionPercent}%</span> commission
+              (or a product-specific rate).
+            </li>
+            <li>Approved commission is added to your wallet earnings.</li>
+          </ol>
+          <p className="pt-1">
+            Browse the{' '}
+            <a href="/shop" className="text-primary hover:underline">
+              Shop
+            </a>{' '}
+            for products that generate commissions.
+          </p>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: 'Total', value: stats.total },

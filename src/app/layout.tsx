@@ -17,17 +17,17 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   ),
   title: {
-    default: 'HelaJFT',
-    template: '%s · HelaJFT',
+    default: 'Nihongo Rewards',
+    template: '%s · Nihongo Rewards',
   },
   description:
     'Learn Japanese, complete challenges, and earn rewards. A modern Japanese learning & rewards platform.',
-  keywords: ['Japanese', 'JLPT', 'learning', 'rewards', 'HelaJFT'],
-  applicationName: 'HelaJFT',
+  keywords: ['Japanese', 'JLPT', 'learning', 'rewards', 'Nihongo'],
+  applicationName: 'Nihongo Rewards',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'HelaJFT',
+    title: 'Nihongo Rewards',
   },
   formatDetection: {
     telephone: false,

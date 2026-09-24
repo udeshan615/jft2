@@ -34,6 +34,8 @@ export function AnnouncementsAdmin({ announcements: initial, adminId }: Props) {
       title: '',
       content: '',
       image_url: null,
+      link_url: null,
+      button_label: null,
       status: 'draft',
       sort_order: items.length,
       starts_at: null,
@@ -77,6 +79,8 @@ export function AnnouncementsAdmin({ announcements: initial, adminId }: Props) {
       title: edit.title,
       content: edit.content || null,
       image_url: edit.image_url || null,
+      link_url: edit.link_url?.trim() || null,
+      button_label: edit.button_label?.trim() || null,
       status: (edit.status || 'draft') as AnnouncementStatus,
       sort_order: edit.sort_order ?? 0,
       starts_at: edit.starts_at || null,
@@ -247,6 +251,32 @@ export function AnnouncementsAdmin({ announcements: initial, adminId }: Props) {
                 Upload image
               </Button>
             </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Button label (optional)</Label>
+                <Input
+                  placeholder="e.g. Join WhatsApp"
+                  value={edit.button_label || ''}
+                  onChange={(e) =>
+                    setEdit({ ...edit, button_label: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Button link URL (optional)</Label>
+                <Input
+                  type="url"
+                  placeholder="https://wa.me/9477xxxxxxx"
+                  value={edit.link_url || ''}
+                  onChange={(e) =>
+                    setEdit({ ...edit, link_url: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Link එක තිබ්බොත් announcement යට button එකක් පේනවා (WhatsApp, Telegram, website, etc.).
+            </p>
             <div className="space-y-2">
               <Label>Status</Label>
               <Select

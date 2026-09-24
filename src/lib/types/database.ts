@@ -185,6 +185,8 @@ export interface Announcement {
   title: string;
   content: string | null;
   image_url: string | null;
+  link_url: string | null;
+  button_label: string | null;
   status: AnnouncementStatus;
   starts_at: string | null;
   ends_at: string | null;

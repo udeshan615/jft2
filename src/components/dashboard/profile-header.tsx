@@ -21,15 +21,15 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
       <div
         className={cn(
           'relative overflow-hidden rounded-2xl p-[1px] transition-transform duration-300 group-hover:scale-[1.01]',
-          'bg-gradient-to-br from-[#123f6b] via-[#2a6f97] to-[#c99a2e]',
-          'shadow-[0_12px_40px_-12px_rgba(18,63,107,0.55)]'
+          'bg-gradient-to-br from-[#c41e3a] via-[#e85a6b] to-white',
+          'shadow-[0_12px_40px_-12px_rgba(196,30,58,0.45)]'
         )}
       >
         {/* Soft glow */}
-        <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#c99a2e]/30 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-8 -left-8 h-28 w-28 rounded-full bg-sky-300/25 blur-2xl" />
+        <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/40 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-8 -left-8 h-28 w-28 rounded-full bg-red-200/50 blur-2xl" />
 
-        <div className="relative rounded-[15px] bg-gradient-to-br from-[#0f355c] via-[#164a7a] to-[#1a5a6e] px-5 py-5 text-white">
+        <div className="relative rounded-[15px] bg-gradient-to-br from-[#c41e3a] via-[#e85a6b] to-[#fff5f5] px-5 py-5 text-white">
           <div className="flex items-center gap-4">
             {/* User emoji only — no photo */}
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/15 text-3xl ring-2 ring-white/25 shadow-inner sm:h-16 sm:w-16 sm:text-4xl">
@@ -37,10 +37,10 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium uppercase tracking-wider text-white/60">
+              <p className="text-xs font-medium uppercase tracking-wider text-white/80 drop-shadow-sm">
                 Hello
               </p>
-              <h1 className="truncate text-lg font-bold tracking-tight sm:text-xl">
+              <h1 className="truncate text-lg font-bold tracking-tight text-white drop-shadow-md sm:text-xl">
                 {displayName}
               </h1>
               {user.email && (

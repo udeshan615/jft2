@@ -20,6 +20,9 @@ export default async function AdminReferralsPage() {
     settings.referral_reward_enabled === true ||
     settings.referral_reward_enabled === 'true';
   const rewardAmount = Number(settings.referral_reward_amount_lkr ?? 200) || 200;
+  const rawTrigger = String(settings.referral_reward_trigger ?? 'on_verified').replace(/"/g, '');
+  const rewardTrigger =
+    rawTrigger === 'on_join' ? 'on_join' as const : 'on_verified' as const;
 
   return (
     <div className="animate-fade-in space-y-2">
@@ -34,6 +37,7 @@ export default async function AdminReferralsPage() {
         referrals={referrals}
         rewardEnabled={rewardEnabled}
         rewardAmount={rewardAmount}
+        rewardTrigger={rewardTrigger}
       />
     </div>
   );

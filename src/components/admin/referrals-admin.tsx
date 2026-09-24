@@ -15,6 +15,7 @@ export function ReferralsAdmin({
   referrals,
   rewardEnabled,
   rewardAmount,
+  rewardTrigger = 'on_verified',
 }: {
   overview: {
     total: number;
@@ -25,10 +26,14 @@ export function ReferralsAdmin({
   referrals: Referral[];
   rewardEnabled: boolean;
   rewardAmount: number;
+  rewardTrigger?: 'on_verified' | 'on_join';
 }) {
   const router = useRouter();
   const [enabled, setEnabled] = useState(rewardEnabled);
   const [amount, setAmount] = useState(String(rewardAmount));
+  const [trigger, setTrigger] = useState<'on_verified' | 'on_join'>(
+    rewardTrigger === 'on_join' ? 'on_join' : 'on_verified'
+  );
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -40,13 +45,25 @@ export function ReferralsAdmin({
       {
         key: 'referral_reward_enabled',
         value: enabled,
-        description: 'Whether qualified referrals earn a reward',
+        description: 'Whether referrals earn a reward',
         is_public: true,
       },
       {
         key: 'referral_reward_amount_lkr',
         value: Number(amount) || 0,
-        description: 'Reward amount (LKR) per qualified referral',
+        description: 'Reward amount (LKR) per referral',
+        is_public: true,
+      },
+      {
+        key: 'referral_reward_trigger',
+        value: trigger,
+        description: 'When to credit: on_verified | on_join',
+        is_public: true,
+      },
+      {
+        key: 'referral_qualify_on_verified',
+        value: trigger === 'on_verified',
+        description: 'Legacy mirror of on_verified trigger',
         is_public: true,
       },
     ];
@@ -106,7 +123,7 @@ export function ReferralsAdmin({
             <Label htmlFor="ref-enabled">Enable referral rewards</Label>
           </div>
           <div className="space-y-2 max-w-xs">
-            <Label>Amount (LKR) per qualified referral</Label>
+            <Label>Amount (LKR) per referral</Label>
             <Input
               type="number"
               min={0}
@@ -114,16 +131,55 @@ export function ReferralsAdmin({
               onChange={(e) => setAmount(e.target.value)}
             />
           </div>
+
+          <div className="space-y-2">
+            <Label>When to add reward to wallet</Label>
+            <div className="space-y-2 rounded-xl border border-border p-3">
+              <label className="flex cursor-pointer items-start gap-3">
+                <input
+                  type="radio"
+                  name="ref-trigger"
+                  className="mt-1"
+                  checked={trigger === 'on_verified'}
+                  onChange={() => setTrigger('on_verified')}
+                />
+                <span>
+                  <span className="font-medium">Verified වුණාම</span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                    Referred user account verified වූ පසුව wallet එකට amount එකතු වේ
+                  </span>
+                </span>
+              </label>
+              <label className="flex cursor-pointer items-start gap-3">
+                <input
+                  type="radio"
+                  name="ref-trigger"
+                  className="mt-1"
+                  checked={trigger === 'on_join'}
+                  onChange={() => setTrigger('on_join')}
+                />
+                <span>
+                  <span className="font-medium">Join වුණාම</span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                    Referral code එකෙන් register වූ විගස wallet එකට amount එකතු වේ
+                  </span>
+                </span>
+              </label>
+            </div>
+          </div>
+
           <Button onClick={saveConfig} disabled={saving}>
             {saving ? 'Saving…' : 'Save'}
           </Button>
           {msg && (
-            <p className="text-sm text-muted-foreground">{msg}</p>
+            <p
+              className={
+                msg === 'Saved' ? 'text-sm text-emerald-600' : 'text-sm text-destructive'
+              }
+            >
+              {msg}
+            </p>
           )}
-          <p className="text-xs text-muted-foreground">
-            Reward is issued automatically when a referred user becomes{' '}
-            <strong>verified</strong> (database-side).
-          </p>
         </CardContent>
       </Card>
 

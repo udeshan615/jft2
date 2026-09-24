@@ -18,6 +18,15 @@ interface Props {
   introDone: boolean;
 }
 
+type ListItem = {
+  key: string;
+  href: string;
+  title: string;
+  subtitle: string;
+  badge: string | number;
+  sort: number;
+};
+
 export function BookHubClient({
   book,
   lessons,
@@ -56,8 +65,37 @@ export function BookHubClient({
     );
   }
 
+  // Single Lessons list: writing lessons + games (no separate Games section)
+  const items: ListItem[] = [
+    ...lessons.map((l, i) => ({
+      key: `lesson-${l.id}`,
+      href: `/learning/kanji/${bookId}/${l.id}`,
+      title: l.title,
+      subtitle: 'Writing practice',
+      badge: l.lesson_number ?? i + 1,
+      sort: (l.sort_order ?? i) * 10,
+    })),
+    ...games.map((g, i) => {
+      const href =
+        g.game_key === 'flash_card'
+          ? `/learning/kanji/${bookId}/games/flash-card`
+          : g.game_key === 'choose_correct'
+            ? `/learning/kanji/${bookId}/games/choose-correct`
+            : '#';
+      const emoji = g.game_key === 'flash_card' ? '🎴' : '🎯';
+      return {
+        key: `game-${g.id}`,
+        href,
+        title: `${emoji} ${g.title_si || g.title}`,
+        subtitle: g.description || 'Practice game',
+        badge: emoji,
+        sort: 1000 + (g.sort_order ?? i),
+      };
+    }),
+  ].sort((a, b) => a.sort - b.sort);
+
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       <div>
         <Link
           href="/learning/kanji"
@@ -73,64 +111,30 @@ export function BookHubClient({
         )}
       </div>
 
-      {/* Lessons */}
       <section className="space-y-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-[#c99a2e]">
           <Layers className="h-4 w-4" /> Lessons
         </h2>
-        {lessons.length === 0 ? (
+        {items.length === 0 ? (
           <p className="text-sm text-muted-foreground">No lessons published yet.</p>
         ) : (
           <div className="grid gap-3">
-            {lessons.map((l, i) => (
-              <Link key={l.id} href={`/learning/kanji/${bookId}/${l.id}`}>
-                <div className="flex items-center gap-3 rounded-2xl border border-[#123f6b]/10 bg-white p-4 shadow-sm transition hover:shadow-md">
+            {items.map((item) => (
+              <Link key={item.key} href={item.href}>
+                <div className="flex items-center gap-3 rounded-2xl border border-[#123f6b]/10 bg-white p-4 shadow-sm transition hover:shadow-md active:scale-[0.99]">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#c99a2e]/15 text-sm font-bold text-[#c99a2e]">
-                    {l.lesson_number ?? i + 1}
+                    {item.badge}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-[#123f6b]">{l.title}</h3>
-                    <p className="text-xs text-muted-foreground">Writing practice</p>
+                    <h3 className="font-semibold text-[#123f6b]">{item.title}</h3>
+                    <p className="text-xs text-muted-foreground line-clamp-1">
+                      {item.subtitle}
+                    </p>
                   </div>
                   <PlayCircle className="h-5 w-5 text-[#123f6b]/40" />
                 </div>
               </Link>
             ))}
-          </div>
-        )}
-      </section>
-
-      {/* Games */}
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-[#c99a2e]">
-          Games
-        </h2>
-        {games.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No games enabled yet.</p>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {games.map((g) => {
-              const href =
-                g.game_key === 'flash_card'
-                  ? `/learning/kanji/${bookId}/games/flash-card`
-                  : g.game_key === 'choose_correct'
-                    ? `/learning/kanji/${bookId}/games/choose-correct`
-                    : '#';
-              const emoji = g.game_key === 'flash_card' ? '🎴' : '🎯';
-              return (
-                <Link key={g.id} href={href}>
-                  <div className="h-full rounded-2xl border border-[#123f6b]/10 bg-gradient-to-br from-white to-[#f0f5fa] p-5 shadow-sm transition hover:shadow-md active:scale-[0.99]">
-                    <div className="text-3xl">{emoji}</div>
-                    <h3 className="mt-2 font-bold text-[#123f6b]">
-                      {g.title_si || g.title}
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-                      {g.description}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
           </div>
         )}
       </section>

@@ -552,7 +552,7 @@ export function EarningsClient({
         </CardContent>
       </Card>
 
-      {/* Add PM modal — footer keeps Confirm always visible on mobile */}
+      {/* Add PM modal — Confirm button ABOVE the detail fields */}
       <Modal
         open={showAddPM}
         onClose={() => {
@@ -563,11 +563,12 @@ export function EarningsClient({
         }}
         title="Add payment method"
         size="md"
-        footer={
-          <div className="space-y-2">
+      >
+        <div className="space-y-4 pb-2">
+          <div className="space-y-2 rounded-xl border border-border bg-muted/30 p-3">
             {error && <p className="text-sm text-destructive">{error}</p>}
             {!canSavePm() && (
-              <p className="text-center text-xs text-muted-foreground">
+              <p className="mb-2 text-center text-xs text-muted-foreground">
                 Fill required fields to enable Confirm
               </p>
             )}
@@ -579,9 +580,6 @@ export function EarningsClient({
               {loading ? <Spinner size="sm" /> : 'Confirm / Save Payment Method'}
             </Button>
           </div>
-        }
-      >
-        <div className="space-y-4 pb-2">
           <div className="space-y-2">
             <Label>Type</Label>
             <Select

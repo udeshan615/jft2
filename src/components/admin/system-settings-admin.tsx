@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,6 +56,7 @@ const EDITABLE_KEYS = [
   'email_from_name',
   'homepage_hero_title',
   'homepage_hero_subtitle',
+  'homepage_hero_image',
 ];
 
 export function SystemSettingsAdmin({ settings: initial }: Props) {
@@ -68,6 +70,36 @@ export function SystemSettingsAdmin({ settings: initial }: Props) {
   });
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [uploadingHero, setUploadingHero] = useState(false);
+  const heroFileRef = useRef<HTMLInputElement>(null);
+
+  async function uploadHeroImage(file: File) {
+    if (!file.type.startsWith('image/')) {
+      setMsg('Please choose an image');
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      setMsg('Image must be under 4 MB');
+      return;
+    }
+    setUploadingHero(true);
+    const supabase = createClient();
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `homepage/hero-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage
+      .from('announcements')
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (error) {
+      setMsg(error.message);
+      setUploadingHero(false);
+      return;
+    }
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('announcements').getPublicUrl(path);
+    setValues((prev) => ({ ...prev, homepage_hero_image: publicUrl }));
+    setUploadingHero(false);
+  }
 
   async function save() {
     setSaving(true);
@@ -248,6 +280,58 @@ export function SystemSettingsAdmin({ settings: initial }: Props) {
         <CardContent className="space-y-4">
           {field('homepage_hero_title', 'Hero title')}
           {field('homepage_hero_subtitle', 'Hero subtitle', undefined, 'textarea')}
+
+          <div className="space-y-2">
+            <Label>App preview image (phone screenshot)</Label>
+            <p className="text-xs text-muted-foreground">
+              Shown inside the phone frame on the homepage. Upload a screenshot of the app.
+            </p>
+            {values.homepage_hero_image && (
+              <div className="overflow-hidden rounded-xl border border-border">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={values.homepage_hero_image}
+                  alt="Homepage preview"
+                  className="h-40 w-full object-cover"
+                />
+              </div>
+            )}
+            <input
+              ref={heroFileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) uploadHeroImage(f);
+              }}
+            />
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled={uploadingHero}
+                onClick={() => heroFileRef.current?.click()}
+              >
+                {uploadingHero ? <Spinner size="sm" /> : <Upload className="h-4 w-4" />}
+                {uploadingHero ? 'Uploading…' : 'Upload image'}
+              </Button>
+              {values.homepage_hero_image && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    setValues((prev) => ({ ...prev, homepage_hero_image: '' }))
+                  }
+                >
+                  Remove
+                </Button>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
 

@@ -41,6 +41,7 @@ export default async function HomePage() {
   let heroTitle = 'ආසාවෙන් ජපන් ඉගෙන ගමු!';
   let heroSubtitle =
     'Rōmaji, Hiragana, Katakana, Kanji, Grammar, Listening, Reading, Kaiwa, Past Papers සහ තව බොහෝ දේ — ඉගෙන ගනිද්දීම rewards earn කරන්න.';
+  let heroImage = '';
   let categories = DEFAULT_CATEGORIES;
 
   try {
@@ -60,6 +61,7 @@ export default async function HomePage() {
           : String(row.value ?? '');
         if (row.key === 'homepage_hero_title' && v) heroTitle = v;
         if (row.key === 'homepage_hero_subtitle' && v) heroSubtitle = v;
+        if (row.key === 'homepage_hero_image' && v) heroImage = v;
       }
     }
 
@@ -95,14 +97,11 @@ export default async function HomePage() {
             <Image
               src="/logo.png"
               alt="HelaJFT"
-              width={36}
-              height={36}
-              className="h-8 w-8 shrink-0 rounded-full object-contain sm:h-9 sm:w-9"
+              width={40}
+              height={40}
+              className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
               priority
             />
-            <span className="truncate text-base font-semibold tracking-tight text-primary sm:text-lg">
-              HelaJFT
-            </span>
           </Link>
           <div className="flex shrink-0 items-center gap-2">
             {user ? (
@@ -159,7 +158,7 @@ export default async function HomePage() {
               width={128}
               height={128}
               priority
-              className="animate-scale-in mx-auto my-6 h-24 w-24 rounded-full object-contain shadow-[0_16px_36px_rgba(18,63,107,0.18)] sm:h-32 sm:w-32"
+              className="animate-scale-in mx-auto my-6 h-24 w-24 object-contain drop-shadow-[0_16px_30px_rgba(18,63,107,0.25)] sm:h-32 sm:w-32"
             />
 
             <h1
@@ -184,6 +183,56 @@ export default async function HomePage() {
                   </Button>
                 </Link>
               )}
+            </div>
+          </div>
+        </section>
+
+        {/* App showcase — image is set from Admin → System Settings → Homepage content */}
+        <section className="border-b border-border bg-muted/30 py-14 sm:py-20">
+          <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
+            <div className="relative mx-auto flex max-w-xs justify-center sm:max-w-sm">
+              {/* phone frame */}
+              <div className="relative aspect-[9/18.5] w-full overflow-hidden rounded-[2.5rem] border-[10px] border-[#123f6b] bg-[#123f6b] shadow-[0_24px_50px_rgba(18,63,107,0.25)]">
+                <div className="absolute left-1/2 top-0 z-10 h-5 w-28 -translate-x-1/2 rounded-b-2xl bg-[#123f6b]" />
+                {heroImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={heroImage}
+                    alt="HelaJFT app preview"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#fdf8ef] p-6 text-center">
+                    <Image
+                      src="/logo.png"
+                      alt="HelaJFT"
+                      width={56}
+                      height={56}
+                      className="h-14 w-14 object-contain"
+                    />
+                    <p className={`${shippori.className} text-base font-bold text-[#123f6b]`}>
+                      HelaJFT
+                    </p>
+                    <div className="mt-2 w-full space-y-2">
+                      {[100, 85, 92, 70].map((w, i) => (
+                        <div
+                          key={i}
+                          className="mx-auto h-2.5 rounded-full bg-[#123f6b]/10"
+                          style={{ width: `${w}%` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-10">
+              <Link href={user ? '/dashboard' : '/register'}>
+                <Button size="lg" className="min-h-[52px] w-full max-w-xs text-base">
+                  {user ? 'Continue Learning' : 'Get Started'}
+                </Button>
+              </Link>
             </div>
           </div>
         </section>

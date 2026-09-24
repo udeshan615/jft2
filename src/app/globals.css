@@ -14,20 +14,20 @@
   --popover: #ffffff;
   --popover-foreground: #1a1a1a;
 
-  --primary: #2d4a6f; /* deep indigo-blue */
+  --primary: #123f6b; /* HelaJFT navy */
   --primary-foreground: #f8fafc;
-  --secondary: #f0ebe3; /* warm paper */
+  --secondary: #eef2f0; /* soft teal-tinted paper */
   --secondary-foreground: #3d3d3d;
   --muted: #f5f2ed;
   --muted-foreground: #6b6b6b;
-  --accent: #e8d5c4; /* soft sakura-beige */
-  --accent-foreground: #3d2c1e;
-  --destructive: #c45c5c;
+  --accent: #ecdcae; /* soft gold, from the HelaJFT mark */
+  --accent-foreground: #4a3a12;
+  --destructive: #b8262c; /* HelaJFT red */
   --destructive-foreground: #fafafa;
 
   --border: #e8e4de;
   --input: #e8e4de;
-  --ring: #2d4a6f;
+  --ring: #123f6b;
 
   --success: #4a7c59;
   --success-foreground: #f0f7f2;

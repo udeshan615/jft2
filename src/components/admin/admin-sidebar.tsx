@@ -67,6 +67,7 @@ const sections = [
       { href: '/admin/model-papers', label: 'Model Papers', icon: FileText },
       { href: '/admin/past-papers', label: 'Past Papers', icon: ScrollText },
       { href: '/admin/kanji', label: 'Kanji Practice', icon: Languages },
+      { href: '/admin/kanji-books', label: 'Kanji Books', icon: Languages },
       { href: '/admin/grammar', label: 'Grammar Practice', icon: BookA },
       { href: '/admin/listening', label: 'Listening Practice', icon: Headphones },
       { href: '/admin/reading', label: 'Reading Practice', icon: BookMarked },

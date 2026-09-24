@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Image from 'next/image';
+import { Shippori_Mincho } from 'next/font/google';
 import { Button } from '@/components/ui/button';
 import {
   BookOpen,
@@ -16,6 +18,11 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 
+const shippori = Shippori_Mincho({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
+});
+
 const DEFAULT_CATEGORIES = [
   { title: 'Rōmaji', description: 'Learn Japanese pronunciation using Rōmaji', icon: Type, href: '/learning' },
   { title: 'Kanji', description: 'Learn and practice Japanese Kanji', icon: Languages, href: '/learning/kanji' },
@@ -31,9 +38,9 @@ const DEFAULT_CATEGORIES = [
 
 export default async function HomePage() {
   let user = null;
-  let heroTitle = 'YOUR WAY TO LEARN JAPANESE WITH AI!';
+  let heroTitle = 'ආසාවෙන් ජපන් ඉගෙන ගමු!';
   let heroSubtitle =
-    'Master Rōmaji, Hiragana, Katakana, Kanji, Grammar, Listening, Reading, Kaiwa, Past Papers and more — earn rewards as you learn.';
+    'Rōmaji, Hiragana, Katakana, Kanji, Grammar, Listening, Reading, Kaiwa, Past Papers සහ තව බොහෝ දේ — ඉගෙන ගනිද්දීම rewards earn කරන්න.';
   let categories = DEFAULT_CATEGORIES;
 
   try {
@@ -85,8 +92,16 @@ export default async function HomePage() {
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
           <Link href="/" className="flex min-w-0 items-center gap-2">
-            <span className="truncate text-xl font-semibold tracking-tight text-primary sm:text-2xl">
-              Nihongo Rewards
+            <Image
+              src="/logo.png"
+              alt="HelaJFT"
+              width={36}
+              height={36}
+              className="h-8 w-8 shrink-0 rounded-full object-contain sm:h-9 sm:w-9"
+              priority
+            />
+            <span className="truncate text-base font-semibold tracking-tight text-primary sm:text-lg">
+              HelaJFT
             </span>
           </Link>
           <div className="flex shrink-0 items-center gap-2">
@@ -115,55 +130,60 @@ export default async function HomePage() {
       </header>
 
       <main>
-        {/* Hero */}
+        {/* Hero — Japan-style gradient, HelaJFT name → logo → headline */}
         <section className="relative overflow-hidden border-b border-border">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-sky-500/5" />
-          <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-2 lg:items-center lg:py-20">
-            <div className="animate-slide-up text-center lg:text-left">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary sm:text-sm">
-                Japanese Learning Platform
-              </p>
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-                {heroTitle}
-              </h1>
-              <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-                {heroSubtitle}
-              </p>
-              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
-                <Link href={user ? '/dashboard' : '/register'} className="w-full sm:w-auto">
-                  <Button size="lg" className="min-h-[48px] w-full min-w-[160px] text-base">
-                    {user ? 'Continue Learning' : 'Get Started Free'}
+          <div
+            className="absolute inset-0 -z-10"
+            style={{
+              background:
+                'radial-gradient(circle at 12% 18%, rgba(18,63,107,0.16), transparent 42%),' +
+                'radial-gradient(circle at 88% 12%, rgba(184,38,44,0.14), transparent 40%),' +
+                'radial-gradient(circle at 15% 88%, rgba(16,96,87,0.15), transparent 42%),' +
+                'radial-gradient(circle at 88% 85%, rgba(201,154,46,0.18), transparent 42%),' +
+                'linear-gradient(160deg,#fdf8ef 0%,#f6efe1 45%,#fdf3ec 100%)',
+            }}
+          />
+          {/* soft rising-sun ring, a quiet nod to the Japan theme */}
+          <div className="pointer-events-none absolute left-1/2 top-6 -z-10 h-[420px] w-[420px] -translate-x-1/2 rounded-full border border-[#b8262c]/10 sm:h-[560px] sm:w-[560px]" />
+
+          <div className="relative mx-auto max-w-2xl px-4 py-14 text-center sm:px-6 sm:py-20">
+            <p
+              className={`${shippori.className} animate-fade-in text-2xl font-extrabold tracking-tight text-[#123f6b] sm:text-3xl`}
+            >
+              HelaJFT
+            </p>
+
+            <Image
+              src="/logo.png"
+              alt="HelaJFT logo"
+              width={128}
+              height={128}
+              priority
+              className="animate-scale-in mx-auto my-6 h-24 w-24 rounded-full object-contain shadow-[0_16px_36px_rgba(18,63,107,0.18)] sm:h-32 sm:w-32"
+            />
+
+            <h1
+              className={`${shippori.className} animate-slide-up text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl`}
+            >
+              {heroTitle}
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+              {heroSubtitle}
+            </p>
+
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <Link href={user ? '/dashboard' : '/register'} className="w-full sm:w-auto">
+                <Button size="lg" className="min-h-[48px] w-full min-w-[160px] text-base">
+                  {user ? 'Continue Learning' : 'Get Started Free'}
+                </Button>
+              </Link>
+              {!user && (
+                <Link href="/login" className="w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="min-h-[48px] w-full min-w-[160px] text-base">
+                    Sign in
                   </Button>
                 </Link>
-                {!user && (
-                  <Link href="/login" className="w-full sm:w-auto">
-                    <Button variant="outline" size="lg" className="min-h-[48px] w-full min-w-[160px] text-base">
-                      Sign in
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            </div>
-            <div className="relative mx-auto flex max-w-md items-center justify-center lg:max-w-none">
-              <div className="relative aspect-square w-full max-w-sm rounded-3xl bg-gradient-to-br from-primary/20 via-sky-400/15 to-violet-500/10 p-8 shadow-lg">
-                <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-                  <span className="text-6xl sm:text-7xl">🇯🇵</span>
-                  <p className="text-lg font-semibold text-foreground">Learn Japanese</p>
-                  <p className="text-sm text-muted-foreground">
-                    AI-assisted · Mobile-first · Earn rewards
-                  </p>
-                  <div className="mt-2 flex flex-wrap justify-center gap-2">
-                    {['漢字', '文法', '会話', '聴解'].map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full bg-card px-3 py-1 text-sm font-medium shadow-sm border border-border"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </section>

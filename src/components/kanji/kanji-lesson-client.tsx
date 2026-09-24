@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { KanjiWriter } from '@/components/kanji/kanji-writer';
 import { createClient } from '@/lib/supabase/client';
-import { extractYoutubeId } from '@/lib/services/kanji-learning';
-import type { KanjiEntry, KanjiLesson } from '@/lib/services/kanji-learning';
+import { extractYoutubeId } from '@/lib/kanji/types';
+import type { KanjiEntry, KanjiLesson } from '@/lib/kanji/types';
 import { cn } from '@/lib/utils/cn';
 
 interface Props {

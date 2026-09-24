@@ -117,7 +117,7 @@ export function BottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 pb-safe md:hidden" aria-label="Main">
         <div className="mx-auto max-w-lg px-2 pb-2 pt-1 sm:px-3 sm:pb-3">
-          <div className="flex h-[64px] items-center justify-around rounded-2xl border border-border/80 bg-card/95 px-0.5 shadow-lg shadow-black/5 backdrop-blur-xl">
+          <div className="flex h-[64px] items-center justify-around rounded-2xl border border-[#123f6b]/10 bg-white/95 px-0.5 shadow-lg shadow-black/5 backdrop-blur-xl">
             {primaryItems.map((item) => {
               const isActive =
                 pathname === item.href || pathname.startsWith(item.href + '/');
@@ -128,13 +128,13 @@ export function BottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
                   href={item.href}
                   className={cn(
                     'relative flex min-h-[52px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 py-1 transition',
-                    isActive ? 'text-primary' : 'text-muted-foreground active:scale-95'
+                    isActive ? 'text-[#123f6b]' : 'text-muted-foreground active:scale-95'
                   )}
                 >
                   <div
                     className={cn(
                       'flex h-9 w-9 items-center justify-center rounded-xl',
-                      isActive && 'bg-primary/12'
+                      isActive && 'bg-[#123f6b]/10'
                     )}
                   >
                     <Icon className="h-5 w-5" strokeWidth={isActive ? 2.25 : 1.75} />
@@ -155,7 +155,7 @@ export function BottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
               onClick={() => setMoreOpen(true)}
               className={cn(
                 'relative flex min-h-[52px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 py-1',
-                moreActive || moreOpen ? 'text-primary' : 'text-muted-foreground active:scale-95'
+                moreActive || moreOpen ? 'text-[#123f6b]' : 'text-muted-foreground active:scale-95'
               )}
               aria-label="Open more menu"
               aria-expanded={moreOpen}

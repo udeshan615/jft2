@@ -18,10 +18,9 @@ export default async function AppLayout({
   const isAdmin = user.role === 'admin';
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-[#f5f8fb] via-[#faf8f4] to-[#f0f4f8]">
       <AppHeader user={user} />
       <MobileTopBar userId={user.id} isAdmin={isAdmin} />
-      {/* pb leaves room for fixed bottom nav + safe area on phones */}
       <main className="min-w-0 flex-1 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8">
         <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-6 sm:py-6">
           {children}

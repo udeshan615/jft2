@@ -13,7 +13,6 @@ import {
   ShoppingBag,
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
-import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/client';
 import { NotificationBell } from '@/components/notifications/notification-bell';
@@ -50,8 +49,9 @@ export function AppHeader({ user }: AppHeaderProps) {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="text-xl font-semibold tracking-tight text-primary">
-              Nihongo Rewards
+            <span className="text-xl font-bold tracking-tight">
+              <span className="text-[#123f6b]">Hela</span>
+              <span className="text-[#c99a2e]">JFT</span>
             </span>
           </Link>
 
@@ -94,12 +94,9 @@ export function AppHeader({ user }: AppHeaderProps) {
             href="/profile"
             className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-muted"
           >
-            <Avatar
-              src={user.profile?.avatar_url}
-              alt={displayName}
-              fallback={displayName}
-              size="sm"
-            />
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#123f6b]/10 text-base">
+              👤
+            </span>
             <span className="max-w-[120px] truncate text-sm font-medium">
               {displayName}
             </span>

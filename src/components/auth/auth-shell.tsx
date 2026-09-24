@@ -48,7 +48,7 @@ export function AuthShell({
         >
           <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[#faf6ee] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.28)] ring-4 ring-white/10 transition-transform duration-300 group-hover:scale-105 sm:h-32 sm:w-32">
             <Image
-              src="/logo.png"
+              src="/logo.webp"
               alt="HelaJFT logo"
               width={112}
               height={112}
